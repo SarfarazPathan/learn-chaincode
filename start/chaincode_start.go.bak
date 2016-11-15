@@ -54,7 +54,7 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 	var provider Provider
 
 	provider = Provider{id: "1001", name: "Sarfaraz", add: "Pune"}
-	providerBytes, err := json.Marshal(provider)
+	providerBytes, err := json.Marshal(&provider)
 
 	if err != nil {
 			fmt.Println("error creating provider" + provider.id)
@@ -62,15 +62,24 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 	}
 
 	fmt.Println("Creating Provider Data" + provider.id)
-        err1 := stub.PutState(provider.id, providerBytes)
+        err1 := stub.PutState("1001", providerBytes)
 	if err1 != nil {
 		return nil, err1
 	    }
-
+	
 	//err2 := stub.PutState("hello_world", []byte(args[0]))
 	//    if err2 != nil {
 	//	return nil, err2
 	//    }
+	
+	var pro Provider
+	proAsbytes, err := stub.GetState("1001")
+	if err != nil {
+		fmt.Println("Error Getting Provider")
+		return nil, errors.New("Error Getting Provider")
+	}
+	err = json.Unmarshal(proAsbytes, &pro)
+	fmt.Println(" >>>> "+pro.id)
 
 	return nil, nil
 }
@@ -150,8 +159,8 @@ fmt.Println("In read")
 		fmt.Println("Error Getting Provider")
 		return nil, errors.New("Error Getting Provider")
 	}
-	err = json.Unmarshal(proAsbytes, provider)
-
+	err = json.Unmarshal(proAsbytes, &provider)
+	fmt.Println(" >>>> "+provider.name)
 	fmt.Println("Provider : "+ provider.id)
 
 	if err != nil {
