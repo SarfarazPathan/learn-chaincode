@@ -50,37 +50,19 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 	if len(args) != 1 {
 		return nil, errors.New("Incorrect number of arguments. Expecting 1")
 	}
+	var err error
+	provider := Provider{}
 
-	var provider Provider
+	provider.id = "1001"
+	provider.name = "Sarfaraz"
+	provider.add = "Pune"
 
-	provider = Provider{id: "1001", name: "Sarfaraz", add: "Pune"}
-	providerBytes, err := json.Marshal(provider)
-
+	fmt.Println("- Creating provider...")
+        jsonAsBytes, _ := json.Marshal(provider)
+        err = stub.PutState("1001", jsonAsBytes)
 	if err != nil {
-			fmt.Println("error creating provider" + provider.id)
-			return nil, errors.New("Error creating provider " + provider.id)
-	}
-
-	fmt.Println("Creating Provider Data" + provider.id)
-        err1 := stub.PutState("1001", providerBytes)
-	if err1 != nil {
-		return nil, err1
-	    }
-	
-	//err2 := stub.PutState("hello_world", []byte(args[0]))
-	//    if err2 != nil {
-	//	return nil, err2
-	//    }
-	
-	var pro Provider
-	proAsbytes, err := stub.GetState("1001")
-	if err != nil {
-		fmt.Println("Error Getting Provider")
-		return nil, errors.New("Error Getting Provider")
-	}
-	err = json.Unmarshal(proAsbytes, &pro)
-	fmt.Println(" >>>> "+pro.id)
-
+            return nil, errors.New("Failed to get opentrades")
+        }
 	return nil, nil
 }
 
@@ -154,19 +136,14 @@ fmt.Println("In read")
 	
     var provider Provider
     fmt.Println("Getting Provider...")
-    proAsbytes, err := stub.GetState("1001")
-	if err != nil {
-		fmt.Println("Error Getting Provider")
-		return nil, errors.New("Error Getting Provider")
-	}
-	err = json.Unmarshal(proAsbytes, &provider)
-	fmt.Println(" >>>> "+provider.name)
-	fmt.Println("Provider : "+ provider.id)
+    //get the  provider struct
 
-	if err != nil {
-		fmt.Println("Error Unmarshalling Error Getting Provid providerBytes e")
-		return nil, errors.New("Error retrieving Error Getting Provide")
-	}
+        providerAsBytes, err := stub.GetState("1001")
+        if err != nil {
+            return nil, errors.New("Failed to get opentrades")
+        }
+       
+	json.Unmarshal(providerAsBytes, &provider)      
 
-    return proAsbytes, nil
+    return providerAsBytes, nil
 }
