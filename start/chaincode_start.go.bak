@@ -67,10 +67,10 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 		return nil, err1
 	    }
 
-	err2 := stub.PutState("hello_world", []byte(args[0]))
-	    if err2 != nil {
-		return nil, err2
-	    }
+	//err2 := stub.PutState("hello_world", []byte(args[0]))
+	//    if err2 != nil {
+	//	return nil, err2
+	//    }
 
 	return nil, nil
 }
