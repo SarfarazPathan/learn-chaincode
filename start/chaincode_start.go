@@ -54,7 +54,7 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 	var provider Provider
 
 	provider = Provider{id: "1001", name: "Sarfaraz", add: "Pune"}
-	providerBytes, err := json.Marshal(&provider)
+	providerBytes, err := json.Marshal(provider)
 
 	if err != nil {
 			fmt.Println("error creating provider" + provider.id)
@@ -150,7 +150,7 @@ fmt.Println("In read")
 		fmt.Println("Error Getting Provider")
 		return nil, errors.New("Error Getting Provider")
 	}
-	err = json.Unmarshal(proAsbytes, &provider)
+	err = json.Unmarshal(proAsbytes, provider)
 
 	fmt.Println("Provider : "+ provider.id)
 
