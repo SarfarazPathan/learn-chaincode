@@ -19,19 +19,12 @@ package main
 import (
 	"errors"
 	"fmt"
-	"encoding/json"
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 )
 
 // SimpleChaincode example simple Chaincode implementation
 type SimpleChaincode struct {
-}
-
-type Provider struct {
-	id        string  `json:"id"`
-	name      string  `json:"name"`
-	add       string  `json:"add"`
 }
 
 // ============================================================================================================================
@@ -51,25 +44,9 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 		return nil, errors.New("Incorrect number of arguments. Expecting 1")
 	}
 
-	var provider Provider
-
-	provider = Provider{id: "1001", name: "Sarfaraz", add: "Pune"}
-	providerBytes, err := json.Marshal(&provider)
-
-	if err != nil {
-			fmt.Println("error creating provider" + provider.id)
-			return nil, errors.New("Error creating provider " + provider.id)
-	}
-
-	fmt.Println("Creating Provider Data")
-        err1 := stub.PutState(provider.id, providerBytes)
-	if err1 != nil {
-		return nil, err1
-	    }
-
-	err2 := stub.PutState("hello_world", []byte(args[0]))
-	    if err2 != nil {
-		return nil, err2
+	err := stub.PutState("hello_world", []byte(args[0]))
+	    if err != nil {
+		return nil, err
 	    }
 
 	return nil, nil
@@ -95,27 +72,12 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 //func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
 func (t *SimpleChaincode) Query(stub *shim.ChaincodeStub, function string, args []string) ([]byte, error) {
 	fmt.Println("query is running " + function)
-	
+
 	// Handle different functions
 	if function == "read" {											//read a variable
-		//fmt.Println("hi there " + function)						//error
+		fmt.Println("hi there " + function)						//error
 		//return nil, nil;
-		//return t.read(stub, args)
-	var provider Provider
-		fmt.Println("Getting Provider...")
-	providerBytes, err := stub.GetState("1001")
-	if err != nil {
-		fmt.Println("Error Getting Provider")
-		return nil, errors.New("Error Getting Provider")
-	}
-	err = json.Unmarshal(providerBytes, &provider)
-
-	fmt.Println("Provider : "+ provider.id)
-
-	if err != nil {
-		fmt.Println("Error Unmarshalling Error Getting Provid providerBytes e")
-		return nil, errors.New("Error retrieving Error Getting Provide")
-	}
+		return t.read(stub, args)
 	}
 	fmt.Println("query did not find func: " + function)						//error
 
