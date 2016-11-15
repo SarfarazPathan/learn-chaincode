@@ -61,7 +61,7 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 			return nil, errors.New("Error creating provider " + provider.id)
 	}
 
-	fmt.Println("Creating Provider Data")
+	fmt.Println("Creating Provider Data" + provider.id)
         err1 := stub.PutState(provider.id, providerBytes)
 	if err1 != nil {
 		return nil, err1
@@ -127,6 +127,8 @@ func (t *SimpleChaincode) write(stub *shim.ChaincodeStub, args []string) ([]byte
 }
 
 func (t *SimpleChaincode) read(stub *shim.ChaincodeStub, args []string) ([]byte, error) {
+fmt.Println("In read")
+
     var key, jsonResp string
     var err error
 
