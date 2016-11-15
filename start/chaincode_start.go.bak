@@ -134,7 +134,7 @@ fmt.Println("In read")
     }
     
 	
-    var provider Provider
+     provider := Provider{}
     fmt.Println("Getting Provider...")
     //get the  provider struct
 
