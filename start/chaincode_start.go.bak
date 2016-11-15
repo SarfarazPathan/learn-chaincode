@@ -98,24 +98,10 @@ func (t *SimpleChaincode) Query(stub *shim.ChaincodeStub, function string, args 
 	
 	// Handle different functions
 	if function == "read" {											//read a variable
-		//fmt.Println("hi there " + function)						//error
-		//return nil, nil;
-		//return t.read(stub, args)
-	var provider Provider
-		fmt.Println("Getting Provider...")
-	providerBytes, err := stub.GetState("1001")
-	if err != nil {
-		fmt.Println("Error Getting Provider")
-		return nil, errors.New("Error Getting Provider")
-	}
-	err = json.Unmarshal(providerBytes, &provider)
-
-	fmt.Println("Provider : "+ provider.id)
-
-	if err != nil {
-		fmt.Println("Error Unmarshalling Error Getting Provid providerBytes e")
-		return nil, errors.New("Error retrieving Error Getting Provide")
-	}
+		fmt.Println("hi there " + function)						//error
+		return nil, nil;
+		return t.read(stub, args)
+	
 	}
 	fmt.Println("query did not find func: " + function)						//error
 
@@ -154,6 +140,23 @@ func (t *SimpleChaincode) read(stub *shim.ChaincodeStub, args []string) ([]byte,
         jsonResp = "{\"Error\":\"Failed to get state for " + key + "\"}"
         return nil, errors.New(jsonResp)
     }
+    
+	
+    var provider Provider
+    fmt.Println("Getting Provider...")
+    proAsbytes, err := stub.GetState("1001")
+	if err != nil {
+		fmt.Println("Error Getting Provider")
+		return nil, errors.New("Error Getting Provider")
+	}
+	err = json.Unmarshal(proAsbytes, &provider)
 
-    return valAsbytes, nil
+	fmt.Println("Provider : "+ provider.id)
+
+	if err != nil {
+		fmt.Println("Error Unmarshalling Error Getting Provid providerBytes e")
+		return nil, errors.New("Error retrieving Error Getting Provide")
+	}
+
+    return proAsbytes, nil
 }
