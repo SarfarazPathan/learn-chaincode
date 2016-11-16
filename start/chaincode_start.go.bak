@@ -50,24 +50,26 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 	if len(args) != 1 {
 		return nil, errors.New("Incorrect number of arguments. Expecting 1")
 	}
-	var err error
-	var provider Provider
+	
+	var v Provider
+	
+	id := "\"id\":\"1001\", "
+	name := "\"name\":\"Sarfaraz\", "
+	add := "\"add\":\"Pune\", "
 
-	provider.id = "1001"
-	provider.name = "Sarfaraz"
-	provider.add = "Pune"
+	v_json := "{"+id+name+add+"}" 
+
+	json.Unmarshal([]byte(v_json), &v) 
+	//if err != nil { return nil, errors.New("Invalid JSON object") }
+	
+
+	bytes, _ := json.Marshal(v)
 
 	
-     provider = Provider{id: "1002", name: "Sarfaraz", add: "PUNE"}
-     djson, err := json.Marshal(&provider)
-     if err != nil {
-        return nil, err
-     }
-     var a = provider.id
-     stub.PutState(a, djson)
+	err = stub.PutState(v.id, bytes)
 
-     personByte, err := stub.GetState(a)
-     fmt.Println(personByte)
+	
+
 
 	return nil, nil
 }
@@ -125,18 +127,15 @@ func (t *SimpleChaincode) write(stub *shim.ChaincodeStub, args []string) ([]byte
 func (t *SimpleChaincode) read(stub *shim.ChaincodeStub, args []string) ([]byte, error) {
 fmt.Println("In read")
 
-   var key, jsonResp string
-    var err error
+   var v Provider
 
-    key = "1002"
-    valAsbytes, err := stub.GetState(key)
-    if err != nil {
-        jsonResp = "{\"Error\":\"Failed to get state for " + key + "\"}"
-        return nil, errors.New(jsonResp)
-    }
-    if valAsbytes == nil {
-        return []byte("cannot find the key's value of the chaincode"), nil
-    }
+	bytes, _ := stub.GetState("1001");
 
-    return valAsbytes, nil
+	//if err != nil {	fmt.Printf("RETRIEVE_V5C: Failed to invoke vehicle_code: %s", err); return v, errors.New("RETRIEVE_V5C: Error retrieving vehicle with v5cID = " + v5cID) }
+
+	err = json.Unmarshal(bytes, &v);
+
+        //if err != nil {	fmt.Printf("RETRIEVE_V5C: Corrupt vehicle record "+string(bytes)+": %s", err); return v, errors.New("RETRIEVE_V5C: Corrupt vehicle record"+string(bytes))	}
+
+	return bytes, nil
 }
