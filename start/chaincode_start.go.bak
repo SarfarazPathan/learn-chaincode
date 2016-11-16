@@ -51,18 +51,24 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 		return nil, errors.New("Incorrect number of arguments. Expecting 1")
 	}
 	var err error
-	provider := Provider{}
+	var provider Provider
 
 	provider.id = "1001"
 	provider.name = "Sarfaraz"
 	provider.add = "Pune"
 
-	fmt.Println("- Creating provider...")
-        jsonAsBytes, _ := json.Marshal(provider)
-        err = stub.PutState("1001", jsonAsBytes)
-	if err != nil {
-            return nil, errors.New("Failed to get opentrades")
-        }
+	
+     provider = Provider{id: "1002", name: "Sarfaraz", add: "PUNE"}
+     djson, err := json.Marshal(&provider)
+     if err != nil {
+        return nil, err
+     }
+     var a = provider.id
+     stub.PutState(a, djson)
+
+     personByte, err := stub.GetState(a)
+     fmt.Println(personByte)
+
 	return nil, nil
 }
 
@@ -119,31 +125,18 @@ func (t *SimpleChaincode) write(stub *shim.ChaincodeStub, args []string) ([]byte
 func (t *SimpleChaincode) read(stub *shim.ChaincodeStub, args []string) ([]byte, error) {
 fmt.Println("In read")
 
-    var key, jsonResp string
+   var key, jsonResp string
     var err error
 
-    if len(args) != 1 {
-        return nil, errors.New("Incorrect number of arguments. Expecting name of the key to query")
-    }
-
-    key = args[0]
-   // valAsbytes, err := stub.GetState(key)
+    key = "1002"
+    valAsbytes, err := stub.GetState(key)
     if err != nil {
         jsonResp = "{\"Error\":\"Failed to get state for " + key + "\"}"
         return nil, errors.New(jsonResp)
     }
-    
-	
-     provider := Provider{}
-    fmt.Println("Getting Provider...")
-    //get the  provider struct
+    if valAsbytes == nil {
+        return []byte("cannot find the key's value of the chaincode"), nil
+    }
 
-        providerAsBytes, err := stub.GetState("1001")
-        if err != nil {
-            return nil, errors.New("Failed to get opentrades")
-        }
-       
-	json.Unmarshal(providerAsBytes, &provider)      
-
-    return providerAsBytes, nil
+    return valAsbytes, nil
 }
