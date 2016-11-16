@@ -20,7 +20,8 @@ import (
 	"errors"
 	"fmt"
 	"encoding/json"
-
+	
+	
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 )
 
@@ -30,7 +31,7 @@ type SimpleChaincode struct {
 
 
 type Provider struct {
-    Id int    `json:"id"`
+    Id string    `json:"id"`
     Name  string `json:"name"`
 }
 
@@ -51,14 +52,14 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 		return nil, errors.New("Incorrect number of arguments. Expecting 1")
 	}
 
-	foo_marshalled, err := json.Marshal(Provider{Id: 1, Name: "SarfarazPathan"})
+	  provider := Provider{"1001", "SarfarazPathan"}
+	  theJson, _ := json.Marshal(provider)
+
+	 fmt.Printf("%+v\n", string(theJson))
+
 	
-	djson, err := json.Marshal(&foo_marshalled)
-	     if err != nil {
-		return nil, err
-	     }
-	    // var a = donation.Id
-	     stub.PutState("1001", djson)
+	stub.PutState("1001", theJson)
+	
 	return nil, nil
 }
 
@@ -114,7 +115,7 @@ func (t *SimpleChaincode) write(stub *shim.ChaincodeStub, args []string) ([]byte
 
 func (t *SimpleChaincode) read(stub *shim.ChaincodeStub, args []string) ([]byte, error) {
     var key, jsonResp string
-    var err error
+    var err  error
 
     if len(args) != 1 {
         return nil, errors.New("Incorrect number of arguments. Expecting name of the key to query")
@@ -128,11 +129,24 @@ func (t *SimpleChaincode) read(stub *shim.ChaincodeStub, args []string) ([]byte,
         return nil, errors.New(jsonResp)
     }
 	
-	var p Provider
 
-	json.Unmarshal(valAsbytes, &p)
-		
-	fmt.Println("Provider : "+p.Name)
+	var p Provider	
+	
+    json.Unmarshal(valAsbytes, &p)
+
+    fmt.Printf("%+v\n", p)
 
     return valAsbytes, nil
+}
+
+func (p *Provider) UnmarshalJSON(buf []byte) error {
+	tmp := []interface{}{&p.Id, &p.Name}
+	wantLen := len(tmp)
+	if err := json.Unmarshal(buf, &tmp); err != nil {
+		return err
+	}
+	if g, e := len(tmp), wantLen; g != e {
+		return fmt.Errorf("wrong number of fields in Notification: %d != %d", g, e)
+	}
+	return nil
 }
