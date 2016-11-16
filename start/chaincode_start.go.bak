@@ -127,8 +127,12 @@ func (t *SimpleChaincode) read(stub *shim.ChaincodeStub, args []string) ([]byte,
         jsonResp = "{\"Error\":\"Failed to get state for " + key + "\"}"
         return nil, errors.New(jsonResp)
     }
+	
+	var p Provider
 
-   
-	fmt.Sprint(valAsbytes)	
+	json.Unmarshal(valAsbytes, &p)
+		
+	fmt.Println("Provider : "+p.Name)
+
     return valAsbytes, nil
 }
