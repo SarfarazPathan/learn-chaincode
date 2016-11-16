@@ -28,10 +28,11 @@ import (
 type SimpleChaincode struct {
 }
 
+
 type Provider struct {
-	id        string  `json:"id"`
-	name      string  `json:"name"`
-	add       string  `json:"add"`
+    id string
+    name string
+    add string
 }
 
 // ============================================================================================================================
@@ -50,26 +51,15 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 	if len(args) != 1 {
 		return nil, errors.New("Incorrect number of arguments. Expecting 1")
 	}
-	
-	var v Provider
-	
-	id := "\"id\":\"1001\", "
-	name := "\"name\":\"Sarfaraz\", "
-	add := "\"add\":\"Pune\", "
 
-	v_json := "{"+id+name+add+"}" 
+	m := Provider{"1001", "SarfarazPathan", "Pune"}
 
-	json.Unmarshal([]byte(v_json), &v) 
-	//if err != nil { return nil, errors.New("Invalid JSON object") }
-	
+	b, err := json.Marshal(m)
 
-	bytes, _ := json.Marshal(v)
-
-	
-	_ = stub.PutState(v.id, bytes)
-
-	
-
+	err1 := stub.PutState("hello_world", b)
+	    if err1 != nil {
+		return nil, err
+	    }
 
 	return nil, nil
 }
@@ -94,12 +84,12 @@ func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args
 //func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
 func (t *SimpleChaincode) Query(stub *shim.ChaincodeStub, function string, args []string) ([]byte, error) {
 	fmt.Println("query is running " + function)
-	
+
 	// Handle different functions
 	if function == "read" {											//read a variable
 		fmt.Println("hi there " + function)						//error
+		//return nil, nil;
 		return t.read(stub, args)
-	
 	}
 	fmt.Println("query did not find func: " + function)						//error
 
@@ -125,19 +115,25 @@ func (t *SimpleChaincode) write(stub *shim.ChaincodeStub, args []string) ([]byte
 }
 
 func (t *SimpleChaincode) read(stub *shim.ChaincodeStub, args []string) ([]byte, error) {
-fmt.Println("In read")
+    var key, jsonResp string
+    var err error
 
-   var v Provider
+    if len(args) != 1 {
+        return nil, errors.New("Incorrect number of arguments. Expecting name of the key to query")
+    }
 
-	bytes, _ := stub.GetState("1001");
+    var m Provider	
 
-	//if err != nil {	fmt.Printf("RETRIEVE_V5C: Failed to invoke vehicle_code: %s", err); return v, errors.New("RETRIEVE_V5C: Error retrieving vehicle with v5cID = " + v5cID) }
+    key = args[0]
+    valAsbytes, err := stub.GetState(key)
+    if err != nil {
+        jsonResp = "{\"Error\":\"Failed to get state for " + key + "\"}"
+        return nil, errors.New(jsonResp)
+    }
 
-	_ = json.Unmarshal(bytes, &v);
+    err1 := json.Unmarshal(valAsbytes, &m)	
 
-        //if err != nil {	fmt.Printf("RETRIEVE_V5C: Corrupt vehicle record "+string(bytes)+": %s", err); return v, errors.New("RETRIEVE_V5C: Corrupt vehicle record"+string(bytes))	}
-
-	fmt.Println("In Provider : "+v.name)
-
-	return bytes, nil
+fmt.Println("running >>>>>>> "+m.name)	
+	
+    return valAsbytes, nil
 }
