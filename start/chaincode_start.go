@@ -137,7 +137,6 @@ if err1 != nil {
         return nil, errors.New(jsonResp)
     }	
 
-fmt.Println("running >>>>>>> "+string(valAsbytes))	
-	
+fmt.Sprint(valAsbytes)	
     return valAsbytes, nil
 }
