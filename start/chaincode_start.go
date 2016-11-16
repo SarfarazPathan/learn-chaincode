@@ -137,5 +137,7 @@ fmt.Println("In read")
 
         //if err != nil {	fmt.Printf("RETRIEVE_V5C: Corrupt vehicle record "+string(bytes)+": %s", err); return v, errors.New("RETRIEVE_V5C: Corrupt vehicle record"+string(bytes))	}
 
+	fmt.Println("In Provider : "+v.name)
+
 	return bytes, nil
 }

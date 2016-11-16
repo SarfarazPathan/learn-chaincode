@@ -66,7 +66,7 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 	bytes, _ := json.Marshal(v)
 
 	
-	err = stub.PutState(v.id, bytes)
+	_ = stub.PutState(v.id, bytes)
 
 	
 
@@ -133,9 +133,11 @@ fmt.Println("In read")
 
 	//if err != nil {	fmt.Printf("RETRIEVE_V5C: Failed to invoke vehicle_code: %s", err); return v, errors.New("RETRIEVE_V5C: Error retrieving vehicle with v5cID = " + v5cID) }
 
-	err = json.Unmarshal(bytes, &v);
+	_ = json.Unmarshal(bytes, &v);
 
         //if err != nil {	fmt.Printf("RETRIEVE_V5C: Corrupt vehicle record "+string(bytes)+": %s", err); return v, errors.New("RETRIEVE_V5C: Corrupt vehicle record"+string(bytes))	}
+
+	fmt.Println("In Provider : "+v.name)
 
 	return bytes, nil
 }
