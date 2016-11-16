@@ -30,9 +30,8 @@ type SimpleChaincode struct {
 
 
 type Provider struct {
-    id string
-    name string
-    add string
+    Id int    `json:"id"`
+    Name  string `json:"name"`
 }
 
 // ============================================================================================================================
@@ -52,15 +51,14 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 		return nil, errors.New("Incorrect number of arguments. Expecting 1")
 	}
 
-	m := Provider{"1001", "SarfarazPathan", "Pune"}
-
-	b, err := json.Marshal(m)
-
-	err1 := stub.PutState("1001", b)
-	    if err1 != nil {
+	foo_marshalled, err := json.Marshal(Provider{Id: 1, Name: "SarfarazPathan"})
+	
+	djson, err := json.Marshal(&foo_marshalled)
+	     if err != nil {
 		return nil, err
-	    }
-
+	     }
+	    // var a = donation.Id
+	     stub.PutState("1001", djson)
 	return nil, nil
 }
 
@@ -122,8 +120,7 @@ func (t *SimpleChaincode) read(stub *shim.ChaincodeStub, args []string) ([]byte,
         return nil, errors.New("Incorrect number of arguments. Expecting name of the key to query")
     }
 
-    var m Provider	
-
+   
     key = args[0]
     valAsbytes, err := stub.GetState(key)
     if err != nil {
@@ -131,12 +128,7 @@ func (t *SimpleChaincode) read(stub *shim.ChaincodeStub, args []string) ([]byte,
         return nil, errors.New(jsonResp)
     }
 
-    err1 := json.Unmarshal(valAsbytes, &m)	
-if err1 != nil {
-        jsonResp = "{\"Error\":\"Failed to get state for " + key + "\"}"
-        return nil, errors.New(jsonResp)
-    }	
-
-fmt.Sprint(valAsbytes)	
+   
+	fmt.Sprint(valAsbytes)	
     return valAsbytes, nil
 }
