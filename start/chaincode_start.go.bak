@@ -56,7 +56,7 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 
 	b, err := json.Marshal(m)
 
-	err1 := stub.PutState("hello_world", b)
+	err1 := stub.PutState("1001", b)
 	    if err1 != nil {
 		return nil, err
 	    }
@@ -132,6 +132,10 @@ func (t *SimpleChaincode) read(stub *shim.ChaincodeStub, args []string) ([]byte,
     }
 
     err1 := json.Unmarshal(valAsbytes, &m)	
+if err1 != nil {
+        jsonResp = "{\"Error\":\"Failed to get state for " + key + "\"}"
+        return nil, errors.New(jsonResp)
+    }	
 
 fmt.Println("running >>>>>>> "+m.name)	
 	

@@ -56,7 +56,7 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 
 	b, err := json.Marshal(m)
 
-	err1 := stub.PutState("hello_world", b)
+	err1 := stub.PutState("1001", b)
 	    if err1 != nil {
 		return nil, err
 	    }
