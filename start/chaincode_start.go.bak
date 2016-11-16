@@ -137,7 +137,7 @@ if err1 != nil {
         return nil, errors.New(jsonResp)
     }	
 
-fmt.Println("running >>>>>>> "+m.name)	
+fmt.Println("running >>>>>>> "+string(valAsbytes))	
 	
     return valAsbytes, nil
 }
