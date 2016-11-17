@@ -31,8 +31,12 @@ type SimpleChaincode struct {
 
 
 type Provider struct {
-    Id string    `json:"id"`
-    Name  string `json:"name"`
+    Id               string `json:"id"`
+    Name             string `json:"name"`
+    Location         string `json:"location"`
+    ProviderNM       string `json:"providerNM"`
+    PrimayInsurance  string `json:"primaryInsurance"`
+    Status           string `json:"status"`
 }
 
 // ============================================================================================================================
@@ -52,13 +56,51 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 		return nil, errors.New("Incorrect number of arguments. Expecting 1")
 	}
 
-	  provider := Provider{"1001", "SarfarazPathan"}
-	  theJson, _ := json.Marshal(provider)
+	  provider1 := Provider{"MQ001", "PETE","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","REJECTED"}
+	  provider2 := Provider{"MQ002", "SRIKANTH","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","PENDING"}
+	  provider3 := Provider{"MQ003", "SARFARAZ","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","APPROVED"}
+	  provider4 := Provider{"MQ004", "TESTER","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","APPROVED"}
+	  provider5 := Provider{"MQ005", "PROVIDER","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","APPROVED"}
+	  provider6 := Provider{"MQ006", "PAYER","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","PENDING"}
+	  provider7 := Provider{"MQ007", "MEMBER","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","REJECTED"}
+	  provider8 := Provider{"MQ008", "JEANNE","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","APPROVED"}
+	  provider9 := Provider{"MQ009", "JING","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","PENDING"}
+	  provider10 := Provider{"MQ010", "PETER","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","APPROVED"}
+	 
+	   theJson1, _ := json.Marshal(provider1)
+	    theJson2, _ := json.Marshal(provider2)
+	     theJson3, _ := json.Marshal(provider3)
+	      theJson4, _ := json.Marshal(provider4)
+	       theJson5, _ := json.Marshal(provider5)
+	        theJson6, _ := json.Marshal(provider6)
+		 theJson7, _ := json.Marshal(provider7)
+		  theJson8, _ := json.Marshal(provider8)
+		   theJson9, _ := json.Marshal(provider9)
+		    theJson10, _ := json.Marshal(provider10)
 
-	 fmt.Printf("%+v\n", string(theJson))
+	fmt.Printf("%+v\n", string(theJson1))
+	fmt.Printf("%+v\n", string(theJson10))
+
+	stub.PutState("MQ001", theJson1)
+	stub.PutState("MQ002", theJson2)
+	stub.PutState("MQ003", theJson3)
+	stub.PutState("MQ004", theJson4)
+	stub.PutState("MQ005", theJson5)
+	stub.PutState("MQ006", theJson6)
+	stub.PutState("MQ007", theJson7)
+	stub.PutState("MQ008", theJson8)
+	stub.PutState("MQ009", theJson9)
+	stub.PutState("MQ010", theJson10)
+
+
+
+	//  provider := Provider{"1001", "SarfarazPathan"}
+	//  theJson, _ := json.Marshal(provider)
+
+	// fmt.Printf("%+v\n", string(theJson))
 
 	
-	stub.PutState("1001", theJson)
+	//stub.PutState("1001", theJson)
 	
 	return nil, nil
 }
