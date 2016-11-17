@@ -138,7 +138,8 @@ func (t *SimpleChaincode) Query(stub *shim.ChaincodeStub, function string, args 
 }
 
 func (t *SimpleChaincode) write(stub *shim.ChaincodeStub, args []string) ([]byte, error) {
-    var key, value string
+   // var key, value string
+    var key string
     var err error
     fmt.Println("running write()")
 
@@ -146,12 +147,20 @@ func (t *SimpleChaincode) write(stub *shim.ChaincodeStub, args []string) ([]byte
         return nil, errors.New("Incorrect number of arguments. Expecting 2. name of the key and value to set")
     }
 
-    key = args[0]                            //rename for fun
-    value = args[1]
-    err = stub.PutState(key, []byte(value))  //write the variable into the chaincode state
+	key = args[0]                            //rename for fun
+	//value = args[1]
+
+	provider := Provider{args[0], args[1],args[2],args[3],args[4],args[5]}
+	theJson, err := json.Marshal(provider)
+	fmt.Printf("%+v\n", string(theJson))
+	stub.PutState(key, theJson)
+
+    
+    //err = stub.PutState(key, []byte(value))  //write the variable into the chaincode state
     if err != nil {
-        return nil, err
+       return nil, err
     }
+
     return nil, nil
 }
 
