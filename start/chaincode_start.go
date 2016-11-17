@@ -139,7 +139,7 @@ func (t *SimpleChaincode) Query(stub *shim.ChaincodeStub, function string, args 
 
 func (t *SimpleChaincode) write(stub *shim.ChaincodeStub, args []string) ([]byte, error) {
    // var key, value string
-    var key string
+    var key , key1 , key2 , key3 , key4 , key5 string
     var err error
     fmt.Println("running write()")
 
@@ -149,8 +149,16 @@ func (t *SimpleChaincode) write(stub *shim.ChaincodeStub, args []string) ([]byte
 
 	key = args[0]                            //rename for fun
 	//value = args[1]
+	
+	key1 = args[1]
+	key2 = args[2]
+	key3 = args[3]
+	key4 = args[4]
+	key5 = args[5]
 
-	provider := Provider{args[0], args[1],args[2],args[3],args[4],args[5]}
+	fmt.Println(key+" : "+key1+" : "+key2+" : "+key3+" : "+key4+" : "+key5)
+
+	provider := Provider{key, key1,key2,key3,key4,key5}
 	theJson, err := json.Marshal(provider)
 	fmt.Printf("%+v\n", string(theJson))
 	stub.PutState(key, theJson)
