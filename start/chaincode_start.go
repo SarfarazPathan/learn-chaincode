@@ -39,6 +39,7 @@ type Provider struct {
     Status           string `json:"status"`
 }
 
+
 // ============================================================================================================================
 // Main
 // ============================================================================================================================
@@ -56,6 +57,9 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 		return nil, errors.New("Incorrect number of arguments. Expecting 1")
 	}
 
+	var providerSlice []Provider
+
+
 	  provider1 := Provider{"MQ001", "PETE","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","REJECTED"}
 	  provider2 := Provider{"MQ002", "SRIKANTH","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","PENDING"}
 	  provider3 := Provider{"MQ003", "SARFARAZ","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","APPROVED"}
@@ -67,16 +71,16 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 	  provider9 := Provider{"MQ009", "JING","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","PENDING"}
 	  provider10 := Provider{"MQ010", "PETER","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","APPROVED"}
 	 
-	   theJson1, _ := json.Marshal(provider1)
-	    theJson2, _ := json.Marshal(provider2)
-	     theJson3, _ := json.Marshal(provider3)
-	      theJson4, _ := json.Marshal(provider4)
-	       theJson5, _ := json.Marshal(provider5)
-	        theJson6, _ := json.Marshal(provider6)
-		 theJson7, _ := json.Marshal(provider7)
-		  theJson8, _ := json.Marshal(provider8)
-		   theJson9, _ := json.Marshal(provider9)
-		    theJson10, _ := json.Marshal(provider10)
+	  theJson1, _ := json.Marshal(provider1)
+	  theJson2, _ := json.Marshal(provider2)
+	  theJson3, _ := json.Marshal(provider3)
+	  theJson4, _ := json.Marshal(provider4)
+	  theJson5, _ := json.Marshal(provider5)
+	  theJson6, _ := json.Marshal(provider6)
+	  theJson7, _ := json.Marshal(provider7)
+	  theJson8, _ := json.Marshal(provider8)
+	  theJson9, _ := json.Marshal(provider9)
+	  theJson10, _ := json.Marshal(provider10)
 
 	fmt.Printf("%+v\n", string(theJson1))
 	fmt.Printf("%+v\n", string(theJson10))
@@ -92,16 +96,23 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 	stub.PutState("MQ009", theJson9)
 	stub.PutState("MQ010", theJson10)
 
+	providerSlice[0] = provider1	
+	providerSlice[1] = provider2
+	providerSlice[2] = provider3
+	providerSlice[3] = provider4
+	providerSlice[4] = provider5
+	providerSlice[5] = provider6
+	providerSlice[6] = provider7
+	providerSlice[7] = provider8
+	providerSlice[8] = provider9
+	providerSlice[9] = provider10
 
+	bytes, err := json.Marshal(providerSlice)
 
-	//  provider := Provider{"1001", "SarfarazPathan"}
-	//  theJson, _ := json.Marshal(provider)
+	if err != nil { return nil, errors.New("Error creating ProviderLst record") }
 
-	// fmt.Printf("%+v\n", string(theJson))
+	err = stub.PutState("providerLst", bytes)
 
-	
-	//stub.PutState("1001", theJson)
-	
 	return nil, nil
 }
 
@@ -173,39 +184,88 @@ func (t *SimpleChaincode) write(stub *shim.ChaincodeStub, args []string) ([]byte
 }
 
 func (t *SimpleChaincode) read(stub *shim.ChaincodeStub, args []string) ([]byte, error) {
-    var key, jsonResp string
-    var err  error
+  //  var key, jsonResp string
+  //  var err  error
 
     if len(args) != 1 {
         return nil, errors.New("Incorrect number of arguments. Expecting name of the key to query")
     }
 
    
-    key = args[0]
-    valAsbytes, err := stub.GetState(key)
-    if err != nil {
-        jsonResp = "{\"Error\":\"Failed to get state for " + key + "\"}"
-        return nil, errors.New(jsonResp)
-    }
+    //key = args[0]
+   // valAsbytes, err := stub.GetState(key)
+    //if err != nil {
+     //   jsonResp = "{\"Error\":\"Failed to get state for " + key + "\"}"
+      //  return nil, errors.New(jsonResp)
+    //}
+//    var p Provider	
+//    json.Unmarshal(valAsbytes, &p)
+//    fmt.Printf("%+v\n", p)
 	
-
-	var p Provider	
+    valAsbytes, _ :=  t.get_providers(stub)
 	
-    json.Unmarshal(valAsbytes, &p)
-
-    fmt.Printf("%+v\n", p)
-
     return valAsbytes, nil
 }
 
-func (p *Provider) UnmarshalJSON(buf []byte) error {
-	tmp := []interface{}{&p.Id, &p.Name}
-	wantLen := len(tmp)
-	if err := json.Unmarshal(buf, &tmp); err != nil {
-		return err
+func (t *SimpleChaincode) get_providers(stub *shim.ChaincodeStub) ([]byte, error) {
+
+	bytes, err := stub.GetState("providerLst")
+	if err != nil { return nil, errors.New("Unable to get providerLst") }
+	
+	var providerSlice []Provider
+
+	err = json.Unmarshal(bytes, &providerSlice)
+	if err != nil { return nil, errors.New("Corrupt providerLst") }
+	
+	var provider Provider
+
+	result := "["
+
+	for i := 0; i < len(providerSlice); i++ {
+	  provider = providerSlice[i]
+	  bytes, _ := json.Marshal(provider)
+		result += string(bytes) + ","
 	}
-	if g, e := len(tmp), wantLen; g != e {
-		return fmt.Errorf("wrong number of fields in Notification: %d != %d", g, e)
+
+	if len(result) == 1 {
+		result = "[]"
+	} else {
+		result = result[:len(result)-1] + "]"
 	}
-	return nil
+
+	fmt.Printf("%+v\n", string(result))
+
+	return []byte(result), nil
+}
+
+func (t *SimpleChaincode) get_vehicle_details(stub shim.ChaincodeStub, p Provider) ([]byte, error) {
+
+	bytes, err := json.Marshal(p)
+
+       if err != nil { return nil, errors.New("GET_VEHICLE_DETAILS: Invalid Provider object") }
+
+//	if  v.Owner== caller || caller_affiliation == AUTHORITY	{
+//	  return bytes, nil
+//	} else {
+//	  return nil, errors.New("Permission Denied. get_vehicle_details")
+//	}
+
+	return bytes, nil
+}
+
+func (t *SimpleChaincode) retrieve_v5c(stub shim.ChaincodeStub, id string) (Provider, error) {
+
+	var p Provider
+
+	bytes, err := stub.GetState(id);
+
+	if err != nil {	fmt.Printf("RETRIEVE_V5C: Failed to invoke vehicle_code: %s", err); 
+	return p, errors.New("RETRIEVE_V5C: Error retrieving vehicle with id = " + id) }
+
+	err = json.Unmarshal(bytes, &p);
+
+    if err != nil {	fmt.Printf("RETRIEVE_V5C: Corrupt vehicle record "+string(bytes)+": %s", err); 
+    return p, errors.New("RETRIEVE_V5C: Corrupt vehicle record"+string(bytes))	}
+
+	return p, nil
 }
