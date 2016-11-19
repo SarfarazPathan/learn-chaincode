@@ -226,8 +226,11 @@ func (t *SimpleChaincode) get_providers(stub *shim.ChaincodeStub) ([]byte, error
 
 	for i := 0; i < len(providerSlice); i++ {
 	  provider = providerSlice[i]
+
 	  bytes, _ := json.Marshal(provider)
 		result += string(bytes) + ","
+
+		  fmt.Println("hi get_providers "+string(bytes))
 	}
 	
 
