@@ -204,11 +204,14 @@ func (t *SimpleChaincode) read(stub *shim.ChaincodeStub, args []string) ([]byte,
 	
     valAsbytes, _ :=  t.get_providers(stub)
 	
+	fmt.Println("hi valAsbytes " + string(valAsbytes))
+
     return valAsbytes, nil
 }
 
 func (t *SimpleChaincode) get_providers(stub *shim.ChaincodeStub) ([]byte, error) {
-
+	fmt.Println("hi get_providers ")
+	
 	bytes, err := stub.GetState("providerLst")
 	if err != nil { return nil, errors.New("Unable to get providerLst") }
 	
@@ -226,6 +229,7 @@ func (t *SimpleChaincode) get_providers(stub *shim.ChaincodeStub) ([]byte, error
 	  bytes, _ := json.Marshal(provider)
 		result += string(bytes) + ","
 	}
+	
 
 	if len(result) == 1 {
 		result = "[]"
@@ -233,8 +237,8 @@ func (t *SimpleChaincode) get_providers(stub *shim.ChaincodeStub) ([]byte, error
 		result = result[:len(result)-1] + "]"
 	}
 
-	fmt.Printf("%+v\n", string(result))
-
+	fmt.Println("hi get_providers " + string(result))
+	
 	return []byte(result), nil
 }
 
