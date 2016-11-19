@@ -39,6 +39,7 @@ type Provider struct {
     Status           string `json:"status"`
 }
 
+type Providers []*Provider
 
 // ============================================================================================================================
 // Main
@@ -57,8 +58,7 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 		return nil, errors.New("Incorrect number of arguments. Expecting 1")
 	}
 
-	var providerSlice []Provider
-
+	
 
 	  provider1 := Provider{"MQ001", "PETE","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","REJECTED"}
 	  provider2 := Provider{"MQ002", "SRIKANTH","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","PENDING"}
@@ -96,22 +96,12 @@ func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args [
 	stub.PutState("MQ009", theJson9)
 	stub.PutState("MQ010", theJson10)
 
-	providerSlice[0] = provider1	
-	providerSlice[1] = provider2
-	providerSlice[2] = provider3
-	providerSlice[3] = provider4
-	providerSlice[4] = provider5
-	providerSlice[5] = provider6
-	providerSlice[6] = provider7
-	providerSlice[7] = provider8
-	providerSlice[8] = provider9
-	providerSlice[9] = provider10
+	    provBytes := Providers{&provider1, &provider2,&provider3,&provider4}
 
-	bytes, err := json.Marshal(providerSlice)
-
-	if err != nil { return nil, errors.New("Error creating ProviderLst record") }
-
-	err = stub.PutState("providerLst", bytes)
+	    b, _ := json.Marshal(provBytes)
+	    fmt.Println(string(b))
+	
+	stub.PutState("lst", b)
 
 	return nil, nil
 }
@@ -184,8 +174,8 @@ func (t *SimpleChaincode) write(stub *shim.ChaincodeStub, args []string) ([]byte
 }
 
 func (t *SimpleChaincode) read(stub *shim.ChaincodeStub, args []string) ([]byte, error) {
-  //  var key, jsonResp string
-  //  var err  error
+    var key, jsonResp string
+    var err  error
 
     if len(args) != 1 {
         return nil, errors.New("Incorrect number of arguments. Expecting name of the key to query")
@@ -202,9 +192,19 @@ func (t *SimpleChaincode) read(stub *shim.ChaincodeStub, args []string) ([]byte,
 //    json.Unmarshal(valAsbytes, &p)
 //    fmt.Printf("%+v\n", p)
 	
-    valAsbytes, _ :=  t.get_providers(stub)
+ //   valAsbytes, _ :=  t.get_providers(stub)
 	
-	fmt.Println("hi valAsbytes " + string(valAsbytes))
+//	fmt.Println("hi valAsbytes " + string(valAsbytes))
+
+    valAsbytes, err := stub.GetState("lst")
+    if err != nil {
+        jsonResp = "{\"Error\":\"Failed to get state for " + key + "\"}"
+        return nil, errors.New(jsonResp)
+    }
+   
+var p Providers
+    json.Unmarshal(valAsbytes, &p)
+   fmt.Println("hi >>>>> "+string(valAsbytes))
 
     return valAsbytes, nil
 }
