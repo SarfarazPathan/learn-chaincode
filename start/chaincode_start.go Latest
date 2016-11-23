@@ -1,5 +1,5 @@
 /*
-Copyright IBM Corp 2016 All Rights Reserved.
+Copyright IBM Corp. 2016 All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -17,9 +17,10 @@ limitations under the License.
 package main
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
+	"encoding/json"
+
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 )
@@ -27,7 +28,6 @@ import (
 // SimpleChaincode example simple Chaincode implementation
 type SimpleChaincode struct {
 }
-
 
 type Provider struct {
     Id               string `json:"id"`
@@ -40,23 +40,19 @@ type Provider struct {
 
 type Providers []*Provider
 
+// Init callback representing the invocation of a chaincode
+// This chaincode will manage two accounts A and B and will transfer X units from A to B upon invoke
 
-// ============================================================================================================================
-// Main
-// ============================================================================================================================
-func main() {
-	err := shim.Start(new(SimpleChaincode))
-	if err != nil {
-		fmt.Printf("Error starting Simple chaincode: %s", err)
-	}
-}
+//func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
+func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) ([]byte, error) {
+	
+	_, args := stub.GetFunctionAndParameters()
 
-
-// Init resets all the things
-func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
 	if len(args) != 1 {
 		return nil, errors.New("Incorrect number of arguments. Expecting 1")
 	}
+
+	
 
 	  provider1 := Provider{"MQ001", "PETE","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","REJECTED"}
 	  provider2 := Provider{"MQ002", "SRIKANTH","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","PENDING"}
@@ -102,28 +98,30 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 	stub.PutState("lst", b)
 
 	return nil, nil
-
 }
 
+func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) ([]byte, error) {
+	function, args := stub.GetFunctionAndParameters()
 
-// Invoke is our entry point to invoke a chaincode function
-func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
 	fmt.Println("invoke is running " + function)
 
 	// Handle different functions
 	if function == "init" {													//initialize the chaincode state, used as reset
-		return t.Init(stub, "init", args)
+		return t.Init(stub)
 	}else if function == "write" {
-		return t.write(stub, args)
+		return t.write(stub,"write", args)
 	}	
 	fmt.Println("invoke did not find func: " + function)					//error
 
 	return nil, errors.New("Received unknown function invocation: " + function)
+
+
 }
 
 
-func (t *SimpleChaincode) write(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	  // var key, value string
+func (t *SimpleChaincode) write(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
+
+   // var key, value string
     var key , key1 , key2 , key3 , key4 , key5 string
     var err error
     fmt.Println("running write()")
@@ -157,28 +155,14 @@ func (t *SimpleChaincode) write(stub shim.ChaincodeStubInterface, args []string)
     return nil, nil
 }
 
-func (t *SimpleChaincode) read(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	  var key, jsonResp string
+
+func (t *SimpleChaincode) read(stub *shim.ChaincodeStub, args []string) ([]byte, error) {
+    var key, jsonResp string
     var err  error
 
     if len(args) != 1 {
         return nil, errors.New("Incorrect number of arguments. Expecting name of the key to query")
     }
-
-   
-    //key = args[0]
-   // valAsbytes, err := stub.GetState(key)
-    //if err != nil {
-     //   jsonResp = "{\"Error\":\"Failed to get state for " + key + "\"}"
-      //  return nil, errors.New(jsonResp)
-    //}
-//    var p Provider	
-//    json.Unmarshal(valAsbytes, &p)
-//    fmt.Printf("%+v\n", p)
-	
- //   valAsbytes, _ :=  t.get_providers(stub)
-	
-//	fmt.Println("hi valAsbytes " + string(valAsbytes))
 
     valAsbytes, err := stub.GetState("lst")
     if err != nil {
@@ -186,26 +170,54 @@ func (t *SimpleChaincode) read(stub shim.ChaincodeStubInterface, args []string) 
         return nil, errors.New(jsonResp)
     }
    
-var p Providers
+    var p Providers
     json.Unmarshal(valAsbytes, &p)
-   fmt.Println("hi >>>>> "+string(valAsbytes))
+    fmt.Println("hi >>>>> "+string(valAsbytes))
+
+    return valAsbytes, nil
+}
+
+
+
+
+// Query callback representing the query of a chaincode
+
+func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface) ([]byte, error) {
+	var key, jsonResp string
+        var err  error
+
+	function, _ := stub.GetFunctionAndParameters()
+	if function != "query" {
+		return nil, errors.New("Invalid query function name. Expecting \"query\"")
+	}
+	// Handle different functions
+	//if function == "read" {											//read a variable
+		fmt.Println("hi there " + function)						//error
+		//return nil, nil;
+		//return t.read(stub , args)
+	//}
+	fmt.Println("query did not find func: " + function)						//error
+
+	valAsbytes, err := stub.GetState("lst")
+    if err != nil {
+        jsonResp = "{\"Error\":\"Failed to get state for " + key + "\"}"
+        return nil, errors.New(jsonResp)
+    }
+   
+    var p Providers
+    json.Unmarshal(valAsbytes, &p)
+    fmt.Println("hi >>>>> "+string(valAsbytes))
 
     return valAsbytes, nil
 
-}
-
-// Query is our entry point for queries
-func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
-	fmt.Println("query is running " + function)
-
-	// Handle different functions
-	if function == "read" {											//read a variable
-		fmt.Println("hi there " + function)						//error
-		//return nil, nil;
-		return t.read(stub, args)
-	}
-	fmt.Println("query did not find func: " + function)						//error
 
 	return nil, errors.New("Received unknown function query: " + function)
 
+}
+
+func main() {
+	err := shim.Start(new(SimpleChaincode))
+	if err != nil {
+		fmt.Printf("Error starting Simple chaincode: %s", err)
+	}
 }

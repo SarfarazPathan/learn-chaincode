@@ -83,7 +83,7 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 	if len(args) != 1 {
 		return nil, errors.New("Incorrect number of arguments. Expecting 1")
 	}
-	return t.writeDummyRec(stub) , nil
+	return t.writeDummyRec(stub)
 	//return nil, nil
 }
 
