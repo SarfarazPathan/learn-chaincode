@@ -58,9 +58,9 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 		return nil, errors.New("Incorrect number of arguments. Expecting 1")
 	}
 
-	  provider1 := Provider{"MQ001", "PETE","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","REJECTED"}
-	  provider2 := Provider{"MQ002", "SRIKANTH","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","PENDING"}
-	  provider3 := Provider{"MQ003", "SARFARAZ","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","APPROVED"}
+	  provider1 := Provider{"MQ001", "SARFARAZ","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","REJECTED"}
+	  provider2 := Provider{"MQ002", "JOHN","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","PENDING"}
+	  provider3 := Provider{"MQ003", "PETE","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","APPROVED"}
 	  provider4 := Provider{"MQ004", "TESTER","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","APPROVED"}
 	  provider5 := Provider{"MQ005", "PROVIDER","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","APPROVED"}
 	  provider6 := Provider{"MQ006", "PAYER","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","PENDING"}
@@ -94,7 +94,7 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 	stub.PutState("MQ009", theJson9)
 	stub.PutState("MQ010", theJson10)
 
-	    provBytes := Providers{&provider1, &provider2,&provider3,&provider4}
+	    provBytes := Providers{&provider1, &provider2,&provider3,&provider4,&provider5,&provider6,&provider7,&provider8}
 
 	    b, _ := json.Marshal(provBytes)
 	    fmt.Println(string(b))
