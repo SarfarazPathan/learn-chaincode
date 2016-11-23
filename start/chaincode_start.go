@@ -1,5 +1,5 @@
 /*
-Copyright IBM Corp 2016 All Rights Reserved.
+Copyright IBM Corp. 2016 All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -19,9 +19,8 @@ package main
 import (
 	"errors"
 	"fmt"
-	"encoding/json"
-	
-	
+	"strconv"
+
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 )
 
@@ -29,250 +28,70 @@ import (
 type SimpleChaincode struct {
 }
 
+var A, B string
+var Aval, Bval, X int
 
-type Provider struct {
-    Id               string `json:"id"`
-    Name             string `json:"name"`
-    Location         string `json:"location"`
-    ProviderNM       string `json:"providerNM"`
-    PrimayInsurance  string `json:"primaryInsurance"`
-    Status           string `json:"status"`
+// Init callback representing the invocation of a chaincode
+// This chaincode will manage two accounts A and B and will transfer X units from A to B upon invoke
+func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) ([]byte, error) {
+	var err error
+	_, args := stub.GetFunctionAndParameters()
+	if len(args) != 4 {
+		return nil, errors.New("Incorrect number of arguments. Expecting 4")
+	}
+
+	// Initialize the chaincode
+	A = args[0]
+	Aval, err = strconv.Atoi(args[1])
+	if err != nil {
+		return nil, errors.New("Expecting integer value for asset holding")
+	}
+	B = args[2]
+	Bval, err = strconv.Atoi(args[3])
+	if err != nil {
+		return nil, errors.New("Expecting integer value for asset holding")
+	}
+	fmt.Printf("Aval = %d, Bval = %d\n", Aval, Bval)
+
+	/************
+			// Write the state to the ledger
+			err = stub.PutState(A, []byte(strconv.Itoa(Aval))
+			if err != nil {
+				return nil, err
+			}
+
+			stub.PutState(B, []byte(strconv.Itoa(Bval))
+			err = stub.PutState(B, []byte(strconv.Itoa(Bval))
+			if err != nil {
+				return nil, err
+			}
+	************/
+	return nil, nil
 }
 
-type Providers []*Provider
+func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) ([]byte, error) {
+	_, args := stub.GetFunctionAndParameters()
+	// Transaction makes payment of X units from A to B
+	var err error
+	X, err = strconv.Atoi(args[0])
+	Aval = Aval - X
+	Bval = Bval + X
+	ts, err2 := stub.GetTxTimestamp()
+	if err2 != nil {
+		fmt.Printf("Error getting transaction timestamp: %s", err2)
+	}
+	fmt.Printf("Transaction Time: %v,Aval = %d, Bval = %d\n", ts, Aval, Bval)
+	return nil, err
+}
 
-// ============================================================================================================================
-// Main
-// ============================================================================================================================
+// Query callback representing the query of a chaincode
+func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface) ([]byte, error) {
+	return nil, nil
+}
+
 func main() {
 	err := shim.Start(new(SimpleChaincode))
 	if err != nil {
 		fmt.Printf("Error starting Simple chaincode: %s", err)
 	}
-}
-
-// Init resets all the things
-//func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
-func (t *SimpleChaincode) Init(stub *shim.ChaincodeStub, function string, args []string) ([]byte, error){
-	if len(args) != 1 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 1")
-	}
-
-	
-
-	  provider1 := Provider{"MQ001", "PETE","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","REJECTED"}
-	  provider2 := Provider{"MQ002", "SRIKANTH","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","PENDING"}
-	  provider3 := Provider{"MQ003", "SARFARAZ","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","APPROVED"}
-	  provider4 := Provider{"MQ004", "TESTER","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","APPROVED"}
-	  provider5 := Provider{"MQ005", "PROVIDER","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","APPROVED"}
-	  provider6 := Provider{"MQ006", "PAYER","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","PENDING"}
-	  provider7 := Provider{"MQ007", "MEMBER","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","REJECTED"}
-	  provider8 := Provider{"MQ008", "JEANNE","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","APPROVED"}
-	  provider9 := Provider{"MQ009", "JING","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","PENDING"}
-	  provider10 := Provider{"MQ010", "PETER","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","APPROVED"}
-	 
-	  theJson1, _ := json.Marshal(provider1)
-	  theJson2, _ := json.Marshal(provider2)
-	  theJson3, _ := json.Marshal(provider3)
-	  theJson4, _ := json.Marshal(provider4)
-	  theJson5, _ := json.Marshal(provider5)
-	  theJson6, _ := json.Marshal(provider6)
-	  theJson7, _ := json.Marshal(provider7)
-	  theJson8, _ := json.Marshal(provider8)
-	  theJson9, _ := json.Marshal(provider9)
-	  theJson10, _ := json.Marshal(provider10)
-
-	fmt.Printf("%+v\n", string(theJson1))
-	fmt.Printf("%+v\n", string(theJson10))
-
-	stub.PutState("MQ001", theJson1)
-	stub.PutState("MQ002", theJson2)
-	stub.PutState("MQ003", theJson3)
-	stub.PutState("MQ004", theJson4)
-	stub.PutState("MQ005", theJson5)
-	stub.PutState("MQ006", theJson6)
-	stub.PutState("MQ007", theJson7)
-	stub.PutState("MQ008", theJson8)
-	stub.PutState("MQ009", theJson9)
-	stub.PutState("MQ010", theJson10)
-
-	    provBytes := Providers{&provider1, &provider2,&provider3,&provider4}
-
-	    b, _ := json.Marshal(provBytes)
-	    fmt.Println(string(b))
-	
-	stub.PutState("lst", b)
-
-	return nil, nil
-}
-
-// Invoke is our entry point to invoke a chaincode function
-//func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
-func (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args []string) ([]byte, error) {
-	fmt.Println("invoke is running " + function)
-
-	// Handle different functions
-	if function == "init" {													//initialize the chaincode state, used as reset
-		return t.Init(stub, "init", args)
-	}else if function == "write" {
-		return t.write(stub, args)
-	}	
-	fmt.Println("invoke did not find func: " + function)					//error
-
-	return nil, errors.New("Received unknown function invocation: " + function)
-}
-
-// Query is our entry point for queries
-//func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
-func (t *SimpleChaincode) Query(stub *shim.ChaincodeStub, function string, args []string) ([]byte, error) {
-	fmt.Println("query is running " + function)
-
-	// Handle different functions
-	if function == "read" {											//read a variable
-		fmt.Println("hi there " + function)						//error
-		//return nil, nil;
-		return t.read(stub, args)
-	}
-	fmt.Println("query did not find func: " + function)						//error
-
-	return nil, errors.New("Received unknown function query: " + function)
-}
-
-func (t *SimpleChaincode) write(stub *shim.ChaincodeStub, args []string) ([]byte, error) {
-   // var key, value string
-    var key , key1 , key2 , key3 , key4 , key5 string
-    var err error
-    fmt.Println("running write()")
-
-    if len(args) != 6 {
-        return nil, errors.New("Incorrect number of arguments. Expecting 2. name of the key and value to set")
-    }
-
-	key = args[0]                            //rename for fun
-	//value = args[1]
-	
-	key1 = args[1]
-	key2 = args[2]
-	key3 = args[3]
-	key4 = args[4]
-	key5 = args[5]
-
-	fmt.Println(key+" : "+key1+" : "+key2+" : "+key3+" : "+key4+" : "+key5)
-
-	provider := Provider{key, key1,key2,key3,key4,key5}
-	theJson, err := json.Marshal(provider)
-	fmt.Printf("%+v\n", string(theJson))
-	stub.PutState(key, theJson)
-
-    
-    //err = stub.PutState(key, []byte(value))  //write the variable into the chaincode state
-    if err != nil {
-       return nil, err
-    }
-
-    return nil, nil
-}
-
-func (t *SimpleChaincode) read(stub *shim.ChaincodeStub, args []string) ([]byte, error) {
-    var key, jsonResp string
-    var err  error
-
-    if len(args) != 1 {
-        return nil, errors.New("Incorrect number of arguments. Expecting name of the key to query")
-    }
-
-   
-    //key = args[0]
-   // valAsbytes, err := stub.GetState(key)
-    //if err != nil {
-     //   jsonResp = "{\"Error\":\"Failed to get state for " + key + "\"}"
-      //  return nil, errors.New(jsonResp)
-    //}
-//    var p Provider	
-//    json.Unmarshal(valAsbytes, &p)
-//    fmt.Printf("%+v\n", p)
-	
- //   valAsbytes, _ :=  t.get_providers(stub)
-	
-//	fmt.Println("hi valAsbytes " + string(valAsbytes))
-
-    valAsbytes, err := stub.GetState("lst")
-    if err != nil {
-        jsonResp = "{\"Error\":\"Failed to get state for " + key + "\"}"
-        return nil, errors.New(jsonResp)
-    }
-   
-var p Providers
-    json.Unmarshal(valAsbytes, &p)
-   fmt.Println("hi >>>>> "+string(valAsbytes))
-
-    return valAsbytes, nil
-}
-
-func (t *SimpleChaincode) get_providers(stub *shim.ChaincodeStub) ([]byte, error) {
-	fmt.Println("hi get_providers ")
-	
-	bytes, err := stub.GetState("providerLst")
-	if err != nil { return nil, errors.New("Unable to get providerLst") }
-	
-	var providerSlice []Provider
-
-	err = json.Unmarshal(bytes, &providerSlice)
-	if err != nil { return nil, errors.New("Corrupt providerLst") }
-	
-	var provider Provider
-
-	result := "["
-
-	for i := 0; i < len(providerSlice); i++ {
-	  provider = providerSlice[i]
-
-	  bytes, _ := json.Marshal(provider)
-		result += string(bytes) + ","
-
-		  fmt.Println("hi get_providers "+string(bytes))
-	}
-	
-
-	if len(result) == 1 {
-		result = "[]"
-	} else {
-		result = result[:len(result)-1] + "]"
-	}
-
-	fmt.Println("hi get_providers " + string(result))
-	
-	return []byte(result), nil
-}
-
-func (t *SimpleChaincode) get_vehicle_details(stub shim.ChaincodeStub, p Provider) ([]byte, error) {
-
-	bytes, err := json.Marshal(p)
-
-       if err != nil { return nil, errors.New("GET_VEHICLE_DETAILS: Invalid Provider object") }
-
-//	if  v.Owner== caller || caller_affiliation == AUTHORITY	{
-//	  return bytes, nil
-//	} else {
-//	  return nil, errors.New("Permission Denied. get_vehicle_details")
-//	}
-
-	return bytes, nil
-}
-
-func (t *SimpleChaincode) retrieve_v5c(stub shim.ChaincodeStub, id string) (Provider, error) {
-
-	var p Provider
-
-	bytes, err := stub.GetState(id);
-
-	if err != nil {	fmt.Printf("RETRIEVE_V5C: Failed to invoke vehicle_code: %s", err); 
-	return p, errors.New("RETRIEVE_V5C: Error retrieving vehicle with id = " + id) }
-
-	err = json.Unmarshal(bytes, &p);
-
-    if err != nil {	fmt.Printf("RETRIEVE_V5C: Corrupt vehicle record "+string(bytes)+": %s", err); 
-    return p, errors.New("RETRIEVE_V5C: Corrupt vehicle record"+string(bytes))	}
-
-	return p, nil
 }
