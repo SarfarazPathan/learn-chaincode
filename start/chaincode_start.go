@@ -171,10 +171,10 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 	stub.PutState("cliInfoJson1", cliInfoJson)
 
 
-	for i:=0; i < len(args); i=i+2 {
-		fmt.Println(args[i] +" : "+ args[i+1])
-		t.add_ecert(stub, args[i], args[i+1])
-	}
+	//for i:=0; i < len(args); i=i+2 {
+	//	fmt.Println(args[i] +" : "+ args[i+1])
+	//	t.add_ecert(stub, args[i], args[i+1])
+	//}
 
 
 	return nil, nil
