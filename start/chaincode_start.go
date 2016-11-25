@@ -170,9 +170,65 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 	fmt.Println(string(cliInfoJson))
 	stub.PutState("cliInfoJson1", cliInfoJson)
 
+
+	for i:=0; i < len(args); i=i+2 {
+		fmt.Println(args[i] +" : "+ args[i+1])
+		t.add_ecert(stub, args[i], args[i+1])
+	}
+
+
 	return nil, nil
 
 }
+
+
+//==============================================================================================================================
+//	 General Functions
+//==============================================================================================================================
+//	 get_ecert - Takes the name passed and calls out to the REST API for HyperLedger to retrieve the ecert
+//				 for that user. Returns the ecert as retrived including html encoding.
+//==============================================================================================================================
+func (t *SimpleChaincode) get_ecert(stub shim.ChaincodeStubInterface, name string) ([]byte, error) {
+
+	ecert, err := stub.GetState(name)
+
+	if err != nil { return nil, errors.New("Couldn't retrieve ecert for user " + name) }
+
+	return ecert, nil
+}
+
+//==============================================================================================================================
+//	 add_ecert - Adds a new ecert and user pair to the table of ecerts
+//==============================================================================================================================
+
+func (t *SimpleChaincode) add_ecert(stub shim.ChaincodeStubInterface, name string, ecert string) ([]byte, error) {
+
+
+	err := stub.PutState(name, []byte(ecert))
+
+	if err == nil {
+		return nil, errors.New("Error storing eCert for user " + name + " identity: " + ecert)
+	}
+
+	return nil, nil
+
+}
+
+//==============================================================================================================================
+//	 get_caller - Retrieves the username of the user who invoked the chaincode.
+//				  Returns the username as a string.
+//==============================================================================================================================
+
+func (t *SimpleChaincode) get_username(stub shim.ChaincodeStubInterface) (string, error) {
+
+    username, err := stub.ReadCertAttribute("username");
+	if err != nil { return "", errors.New("Couldn't get attribute 'username'. Error: " + err.Error()) }
+	return string(username), nil
+}
+
+
+
+
 
 
 // Invoke is our entry point to invoke a chaincode function
@@ -377,6 +433,9 @@ func (t *SimpleChaincode) writeClientsInformation(stub shim.ChaincodeStubInterfa
 func (t *SimpleChaincode) read(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	  var key, jsonResp string
     var err  error
+	
+	user, _ := t.get_username(stub)
+	fmt.Println("USER : >> "+user)
 
     if len(args) != 1 {
         return nil, errors.New("Incorrect number of arguments. Expecting name of the key to query")
