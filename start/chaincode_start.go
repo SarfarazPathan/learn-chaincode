@@ -41,6 +41,46 @@ type Provider struct {
 type Providers []*Provider
 
 
+
+type ProviderInformation struct {
+	ProviderID	string `json:"providerId"`
+	Name 		string `json:"name"`	
+	Address 	string `json:"address"`
+	City	 	string `json:"city"`
+	ZipCode 	string `json:"zipCode"`
+	Phone 		string `json:"phone"`
+	Fax 		string `json:"fax"`
+	ContactPerson	string `json:"contactPerson"`
+}
+type ProvidersInformation []*ProviderInformation
+
+type PatientInformation struct {
+	Name 		string `json:"name"`
+	MemberID 	string `json:"memberID"`
+	DOB 		string `json:"dob"`
+	DateOfRequest 	string `json:"dateOfRequest"`
+}
+type PatientsInformation []*PatientInformation
+
+type ServiceRequested struct {
+	ServiceRequested string `json:"serviceRequested"`	
+	DOS		 string `json:"dos"`
+	CPTCode		 string `json:"cptCode"`
+	ICD10Code	 string `json:"icd10Code"`
+	ProviderFacility string `json:"providerFacility"`
+	Phone		 string `json:"phone"`
+	Address		 string `json:"address"`
+	City		 string `json:"city"`
+	ZipCode		 string `json:"zipCode"`	
+}
+type ServicesRequested []*ServiceRequested
+
+type ClientInformation struct {
+	ClinicalInformationDoc 		string `json:"clinicalInformationDoc"`
+	Attachements 	string `json:"attachements"`
+}
+type ClientsInformation []*ClientInformation
+
 // ============================================================================================================================
 // Main
 // ============================================================================================================================
@@ -101,6 +141,35 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 	
 	stub.PutState("lst", b)
 
+
+		///////////// Default ProvidersInformation Stored
+	provInfo := ProviderInformation{"PI001", "SarfarazPathan","NIBM ROAD","PUNE","441802","01010101010","FAX10101","Khan"}
+	provIBytes := ProvidersInformation{&provInfo}
+	provInfoJson, _ := json.Marshal(provIBytes)
+	fmt.Println(string(provInfoJson))
+	stub.PutState("provInfoJson1", provInfoJson)
+
+		///////////// Default PatientInformation  Stored
+	patInfo := PatientInformation{"MI001", "SarfarazPathan","02-20-2020","02-20-2121"}
+	patBytes := PatientsInformation{&patInfo}
+	patInfoJson, _ := json.Marshal(patBytes)
+	fmt.Println(string(patInfoJson))
+	stub.PutState("patInfoJson1", patInfoJson)
+
+		///////////// Default PatientInformation  Stored
+	serReq := ServiceRequested {"EyeTransplant", "DOS","CPT001","ICD10001","YES","01010101010","OZON 2 Hadpsar","PUNE","441803"}
+	serReqBytes := ServicesRequested{&serReq}
+	serReqJson, _ := json.Marshal(serReqBytes)
+	fmt.Println(string(serReqJson))
+	stub.PutState("serReqJson1", serReqJson)
+	
+		///////////// Default ClientInformation   Stored
+	cliInfo := ClientInformation {"Blood Report,ECG", "YES"}
+	cliInfoBytes := ClientsInformation{&cliInfo}
+	cliInfoJson, _ := json.Marshal(cliInfoBytes)
+	fmt.Println(string(cliInfoJson))
+	stub.PutState("cliInfoJson1", cliInfoJson)
+
 	return nil, nil
 
 }
@@ -157,6 +226,154 @@ func (t *SimpleChaincode) write(stub shim.ChaincodeStubInterface, args []string)
     return nil, nil
 }
 
+
+///////////
+
+func (t *SimpleChaincode) writeProviderInformation(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	  // var key, value string
+    var key , key1 , key2 , key3 , key4 , key5 string
+    var err error
+    fmt.Println("running write()")
+
+    if len(args) != 6 {
+        return nil, errors.New("Incorrect number of arguments. Expecting 2. name of the key and value to set")
+    }
+
+	key = args[0]                            //rename for fun
+	//value = args[1]
+	
+	key1 = args[1]
+	key2 = args[2]
+	key3 = args[3]
+	key4 = args[4]
+	key5 = args[5]
+
+	fmt.Println(key+" : "+key1+" : "+key2+" : "+key3+" : "+key4+" : "+key5)
+
+	provider := Provider{key, key1,key2,key3,key4,key5}
+	theJson, err := json.Marshal(provider)
+	fmt.Printf("%+v\n", string(theJson))
+	stub.PutState(key, theJson)
+
+    
+    //err = stub.PutState(key, []byte(value))  //write the variable into the chaincode state
+    if err != nil {
+       return nil, err
+    }
+
+    return nil, nil
+}
+
+func (t *SimpleChaincode) writePatientsInformation(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	  // var key, value string
+    var key , key1 , key2 , key3 , key4 , key5 string
+    var err error
+    fmt.Println("running write()")
+
+    if len(args) != 6 {
+        return nil, errors.New("Incorrect number of arguments. Expecting 2. name of the key and value to set")
+    }
+
+	key = args[0]                            //rename for fun
+	//value = args[1]
+	
+	key1 = args[1]
+	key2 = args[2]
+	key3 = args[3]
+	key4 = args[4]
+	key5 = args[5]
+
+	fmt.Println(key+" : "+key1+" : "+key2+" : "+key3+" : "+key4+" : "+key5)
+
+	provider := Provider{key, key1,key2,key3,key4,key5}
+	theJson, err := json.Marshal(provider)
+	fmt.Printf("%+v\n", string(theJson))
+	stub.PutState(key, theJson)
+
+    
+    //err = stub.PutState(key, []byte(value))  //write the variable into the chaincode state
+    if err != nil {
+       return nil, err
+    }
+
+    return nil, nil
+}
+
+
+func (t *SimpleChaincode) writeServicesRequested(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	  // var key, value string
+    var key , key1 , key2 , key3 , key4 , key5 string
+    var err error
+    fmt.Println("running write()")
+
+    if len(args) != 6 {
+        return nil, errors.New("Incorrect number of arguments. Expecting 2. name of the key and value to set")
+    }
+
+	key = args[0]                            //rename for fun
+	//value = args[1]
+	
+	key1 = args[1]
+	key2 = args[2]
+	key3 = args[3]
+	key4 = args[4]
+	key5 = args[5]
+
+	fmt.Println(key+" : "+key1+" : "+key2+" : "+key3+" : "+key4+" : "+key5)
+
+	provider := Provider{key, key1,key2,key3,key4,key5}
+	theJson, err := json.Marshal(provider)
+	fmt.Printf("%+v\n", string(theJson))
+	stub.PutState(key, theJson)
+
+    
+    //err = stub.PutState(key, []byte(value))  //write the variable into the chaincode state
+    if err != nil {
+       return nil, err
+    }
+
+    return nil, nil
+}
+
+func (t *SimpleChaincode) writeClientsInformation(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	  // var key, value string
+    var key , key1 , key2 , key3 , key4 , key5 string
+    var err error
+    fmt.Println("running write()")
+
+    if len(args) != 6 {
+        return nil, errors.New("Incorrect number of arguments. Expecting 2. name of the key and value to set")
+    }
+
+	key = args[0]                            //rename for fun
+	//value = args[1]
+	
+	key1 = args[1]
+	key2 = args[2]
+	key3 = args[3]
+	key4 = args[4]
+	key5 = args[5]
+
+	fmt.Println(key+" : "+key1+" : "+key2+" : "+key3+" : "+key4+" : "+key5)
+
+	provider := Provider{key, key1,key2,key3,key4,key5}
+	theJson, err := json.Marshal(provider)
+	fmt.Printf("%+v\n", string(theJson))
+	stub.PutState(key, theJson)
+
+    
+    //err = stub.PutState(key, []byte(value))  //write the variable into the chaincode state
+    if err != nil {
+       return nil, err
+    }
+
+    return nil, nil
+}
+
+
+
+
+
 func (t *SimpleChaincode) read(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	  var key, jsonResp string
     var err  error
@@ -201,11 +418,121 @@ func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function strin
 	// Handle different functions
 	if function == "read" {											//read a variable
 		fmt.Println("hi there " + function)						//error
-		//return nil, nil;
 		return t.read(stub, args)
 	}
+
+	if function == "pro" {											//read a variable
+		fmt.Println("hi there " + function)						//error
+		return t.readProviderInformation(stub, args)
+	}
+
+	if function == "mem" {											//read a variable
+		fmt.Println("hi there " + function)						//error
+		return t.readPatientInformation(stub, args)
+	}
+
+	if function == "ser" {											//read a variable
+		fmt.Println("hi there " + function)						//error
+		return t.readServiceRequested(stub, args)
+	}
+	
+	if function == "cli" {											//read a variable
+		fmt.Println("hi there " + function)						//error
+		return t.readClientInformation(stub, args)
+	}
+
 	fmt.Println("query did not find func: " + function)						//error
 
 	return nil, errors.New("Received unknown function query: " + function)
 
+}
+
+
+		/////////// Read ProviderInformation 
+func (t *SimpleChaincode) readProviderInformation(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+    var key, jsonResp string
+    var err  error
+
+    if len(args) != 1 {
+        return nil, errors.New("Incorrect number of arguments. Expecting name of the key to query")
+    }
+
+    valAsbytes, err := stub.GetState("provInfoJson1")
+    if err != nil {
+        jsonResp = "{\"Error\":\"Failed to get state for " + key + "\"}"
+        return nil, errors.New(jsonResp)
+    }
+   
+    var p ProvidersInformation
+    json.Unmarshal(valAsbytes, &p)
+    fmt.Println("ProvidersInformation >>>>> "+string(valAsbytes))
+
+    return valAsbytes, nil
+}
+
+		/////////// Read PatientInformation  
+func (t *SimpleChaincode) readPatientInformation(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+    var key, jsonResp string
+    var err  error
+
+    if len(args) != 1 {
+        return nil, errors.New("Incorrect number of arguments. Expecting name of the key to query")
+    }
+
+    valAsbytes, err := stub.GetState("patInfoJson1")
+    if err != nil {
+        jsonResp = "{\"Error\":\"Failed to get state for " + key + "\"}"
+        return nil, errors.New(jsonResp)
+    }
+   
+    var p PatientsInformation
+    json.Unmarshal(valAsbytes, &p)
+    fmt.Println("PatientInformation >>>>> "+string(valAsbytes))
+
+    return valAsbytes, nil
+}
+
+		/////////// Read ServiceRequested  
+func (t *SimpleChaincode) readServiceRequested(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+    var key, jsonResp string
+    var err  error
+
+    if len(args) != 1 {
+        return nil, errors.New("Incorrect number of arguments. Expecting name of the key to query")
+    }
+
+    valAsbytes, err := stub.GetState("serReqJson1")
+    if err != nil {
+        jsonResp = "{\"Error\":\"Failed to get state for " + key + "\"}"
+        return nil, errors.New(jsonResp)
+    }
+   
+    var s ServicesRequested
+    json.Unmarshal(valAsbytes, &s)
+    fmt.Println("ServiceRequested >>>>> "+string(valAsbytes))
+
+    return valAsbytes, nil
+}
+
+
+		/////////// Read ClientInformation   
+func (t *SimpleChaincode) readClientInformation(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+    var key, jsonResp string
+    var err  error
+
+    if len(args) != 1 {
+        return nil, errors.New("Incorrect number of arguments. Expecting name of the key to query")
+    }
+
+    valAsbytes, err := stub.GetState("cliInfoJson1")
+    if err != nil {
+        jsonResp = "{\"Error\":\"Failed to get state for " + key + "\"}"
+        return nil, errors.New(jsonResp)
+    }
+   
+    var c ClientsInformation
+    json.Unmarshal(valAsbytes, &c)
+    fmt.Println("ClientInformation  >>>>> "+string(valAsbytes))
+
+    return valAsbytes, nil
 }
