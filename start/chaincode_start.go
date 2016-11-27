@@ -331,10 +331,11 @@ func (t *SimpleChaincode) writePreAuth(stub shim.ChaincodeStubInterface, args []
 	fmt.Println("<<<<<<<< PreAuthRequest >>>>>")
 
 	  key = args[0]                            //rename for fun
-	  key1 = args[12]
-	  key2 = args[10]
-	  key3 = args[3] + " , " +args[4]
 	  key4 = args[2]
+	  key3 = args[3] + " , " +args[4]
+	  key2 = args[10]
+	  key1 = args[12]
+	  
 	  key5 = "Blue Cross"
 	  key6 = "PENDING"
 
