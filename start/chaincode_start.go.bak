@@ -21,6 +21,7 @@ import (
 	"errors"
 	"fmt"
 	
+
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 )
 
@@ -574,7 +575,7 @@ func (t *SimpleChaincode) readPreAuth(stub shim.ChaincodeStubInterface, args []s
     //var preAuthReqFound PreAuthRequest
      
      for _, preAuth := range preAuthReq {
-        fmt.Printf("ID: %s NAME: %S\n", preAuth.Id, preAuth.Name)
+        fmt.Println(preAuth.Id +" : "+ preAuth.Name)
         fmt.Println("")
 	if key == preAuth.Id {
 		preAuthJson, _ := json.Marshal(preAuth)	
