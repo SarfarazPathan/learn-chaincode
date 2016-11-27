@@ -319,10 +319,16 @@ func (t *SimpleChaincode) writePreAuth(stub shim.ChaincodeStubInterface, args []
 
 	 valAsbytes , _ := t.read(stub,args)
 
-	 fmt.Println(string(len(args)) + "writePreAuth valAsbytes >>>>> "+string(valAsbytes))
+	 fmt.Println("writePreAuth valAsbytes >>>>> "+string(valAsbytes))
+
+	 for i:=0; i < len(args); i++ {
+		fmt.Println(args[i])
+	}
 
 	 oldPreAuthReq := []PreAuthRequest{}
 	 json.Unmarshal(valAsbytes, &oldPreAuthReq)
+
+	fmt.Println("<<<<<<<< PreAuthRequest >>>>>")
 
 	  key = args[0]                            //rename for fun
 	  key1 = args[12]
