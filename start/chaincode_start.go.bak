@@ -20,7 +20,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-
+	
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 )
 
@@ -39,8 +39,9 @@ type User_and_eCert struct {
 }
 
 
-type Provider struct {
+type PreAuthRequest struct {
     Id               string `json:"id"`
+    Dor              string `json:"dor"`
     Name             string `json:"name"`
     Location         string `json:"location"`
     ProviderNM       string `json:"providerNM"`
@@ -48,13 +49,13 @@ type Provider struct {
     Status           string `json:"status"`
 }
 
-type Providers []*Provider
+type PreAuthRequests []*PreAuthRequest
 
 
 
 type ProviderInformation struct {
 	ProviderID	string `json:"providerId"`
-	Name 		string `json:"name"`	
+	Name 		string `json:"providerName"`	
 	Address 	string `json:"address"`
 	City	 	string `json:"city"`
 	ZipCode 	string `json:"zipCode"`
@@ -65,7 +66,7 @@ type ProviderInformation struct {
 type ProvidersInformation []*ProviderInformation
 
 type PatientInformation struct {
-	Name 		string `json:"name"`
+	Name 		string `json:"memberName"`
 	MemberID 	string `json:"memberID"`
 	DOB 		string `json:"dob"`
 	DateOfRequest 	string `json:"dateOfRequest"`
@@ -78,10 +79,10 @@ type ServiceRequested struct {
 	CPTCode		 string `json:"cptCode"`
 	ICD10Code	 string `json:"icd10Code"`
 	ProviderFacility string `json:"providerFacility"`
-	Phone		 string `json:"phone"`
-	Address		 string `json:"address"`
-	City		 string `json:"city"`
-	ZipCode		 string `json:"zipCode"`	
+	Phone		 string `json:"serPhone"`
+	Address		 string `json:"serAddress"`
+	City		 string `json:"serCity"`
+	ZipCode		 string `json:"serZipCode"`	
 }
 type ServicesRequested []*ServiceRequested
 
@@ -108,27 +109,27 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 		return nil, errors.New("Incorrect number of arguments. Expecting 1")
 	}
 
-	  provider1 := Provider{"MQ001", "SARFARAZ","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","REJECTED"}
-	  provider2 := Provider{"MQ002", "JOHN","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","PENDING"}
-	  provider3 := Provider{"MQ003", "PETE","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","APPROVED"}
-	  provider4 := Provider{"MQ004", "TESTER","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","APPROVED"}
-	  provider5 := Provider{"MQ005", "PROVIDER","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","APPROVED"}
-	  provider6 := Provider{"MQ006", "PAYER","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","PENDING"}
-	  provider7 := Provider{"MQ007", "MEMBER","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","REJECTED"}
-	  provider8 := Provider{"MQ008", "JEANNE","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","APPROVED"}
-	  provider9 := Provider{"MQ009", "JING","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","PENDING"}
-	  provider10 := Provider{"MQ010", "PETER","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","APPROVED"}
+	  preAuthRequest1 := PreAuthRequest{"MQ001","01/01/2017", "SARFARAZ","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","REJECTED"}
+	  preAuthRequest2 := PreAuthRequest{"MQ002","01/01/2017", "JOHN","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","PENDING"}
+	  preAuthRequest3 := PreAuthRequest{"MQ003","01/01/2017", "PETE","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","APPROVED"}
+	  preAuthRequest4 := PreAuthRequest{"MQ004","01/01/2017", "TESTER","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","APPROVED"}
+	  preAuthRequest5 := PreAuthRequest{"MQ005","01/01/2017", "PROVIDER","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","APPROVED"}
+	  preAuthRequest6 := PreAuthRequest{"MQ006","01/01/2017", "PAYER","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","PENDING"}
+	  preAuthRequest7 := PreAuthRequest{"MQ007","01/01/2017", "MEMBER","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","REJECTED"}
+	  preAuthRequest8 := PreAuthRequest{"MQ008","01/01/2017", "JEANNE","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","APPROVED"}
+	  preAuthRequest9 := PreAuthRequest{"MQ009","01/01/2017", "JING","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","PENDING"}
+	  preAuthRequest10 := PreAuthRequest{"MQ010","01/01/2017", "PETER","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","APPROVED"}
 	 
-	  theJson1, _ := json.Marshal(provider1)
-	  theJson2, _ := json.Marshal(provider2)
-	  theJson3, _ := json.Marshal(provider3)
-	  theJson4, _ := json.Marshal(provider4)
-	  theJson5, _ := json.Marshal(provider5)
-	  theJson6, _ := json.Marshal(provider6)
-	  theJson7, _ := json.Marshal(provider7)
-	  theJson8, _ := json.Marshal(provider8)
-	  theJson9, _ := json.Marshal(provider9)
-	  theJson10, _ := json.Marshal(provider10)
+	  theJson1, _ := json.Marshal(preAuthRequest1)
+	  theJson2, _ := json.Marshal(preAuthRequest2)
+	  theJson3, _ := json.Marshal(preAuthRequest3)
+	  theJson4, _ := json.Marshal(preAuthRequest4)
+	  theJson5, _ := json.Marshal(preAuthRequest5)
+	  theJson6, _ := json.Marshal(preAuthRequest6)
+	  theJson7, _ := json.Marshal(preAuthRequest7)
+	  theJson8, _ := json.Marshal(preAuthRequest8)
+	  theJson9, _ := json.Marshal(preAuthRequest9)
+	  theJson10, _ := json.Marshal(preAuthRequest10)
 
 	fmt.Printf("%+v\n", string(theJson1))
 	fmt.Printf("%+v\n", string(theJson10))
@@ -144,7 +145,7 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 	stub.PutState("MQ009", theJson9)
 	stub.PutState("MQ010", theJson10)
 
-	    provBytes := Providers{&provider1, &provider2,&provider3,&provider4,&provider5,&provider6,&provider7,&provider8}
+	    provBytes := PreAuthRequests{&preAuthRequest1, &preAuthRequest2,&preAuthRequest3,&preAuthRequest4,&preAuthRequest5,&preAuthRequest6,&preAuthRequest7,&preAuthRequest8}
 
 	    b, _ := json.Marshal(provBytes)
 	    fmt.Println(string(b))
@@ -180,10 +181,10 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 	fmt.Println(string(cliInfoJson))
 	stub.PutState("cliInfoJson1", cliInfoJson)
 
-
-	  for i:=0; i < len(args); i=i+2 {
-		t.add_ecert(stub, args[i], args[i+1])
-	 }
+	
+	//for i:=0; i < len(randomVal); i=i+2 {
+	//	t.add_ecert(stub, randomVal[i], randomVal[i+1])
+	//}
 
 
 	return nil, nil
@@ -258,7 +259,7 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 
 func (t *SimpleChaincode) write(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	  // var key, value string
-    var key , key1 , key2 , key3 , key4 , key5 string
+    var key , key1 , key2 , key3 , key4 , key5, key6 string
     var err error
     fmt.Println("running write()")
 
@@ -274,10 +275,11 @@ func (t *SimpleChaincode) write(stub shim.ChaincodeStubInterface, args []string)
 	key3 = args[3]
 	key4 = args[4]
 	key5 = args[5]
+	key6 = args[6]
 
-	fmt.Println(key+" : "+key1+" : "+key2+" : "+key3+" : "+key4+" : "+key5)
+	fmt.Println(key+" : "+key1+" : "+key2+" : "+key3+" : "+key4+" : "+key5+" : "+key6)
 
-	provider := Provider{key, key1,key2,key3,key4,key5}
+	provider := PreAuthRequest{key, key1,key2,key3,key4,key5,key6}
 	theJson, err := json.Marshal(provider)
 	fmt.Printf("%+v\n", string(theJson))
 	stub.PutState(key, theJson)
@@ -296,7 +298,7 @@ func (t *SimpleChaincode) write(stub shim.ChaincodeStubInterface, args []string)
 
 func (t *SimpleChaincode) writeProviderInformation(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	  // var key, value string
-    var key , key1 , key2 , key3 , key4 , key5 string
+    var key , key1 , key2 , key3 , key4 , key5  , key6 string
     var err error
     fmt.Println("running write()")
 
@@ -312,10 +314,11 @@ func (t *SimpleChaincode) writeProviderInformation(stub shim.ChaincodeStubInterf
 	key3 = args[3]
 	key4 = args[4]
 	key5 = args[5]
+	key6 = args[6]
 
-	fmt.Println(key+" : "+key1+" : "+key2+" : "+key3+" : "+key4+" : "+key5)
+	fmt.Println(key+" : "+key1+" : "+key2+" : "+key3+" : "+key4+" : "+key5+" : "+key6)
 
-	provider := Provider{key, key1,key2,key3,key4,key5}
+	provider := PreAuthRequest{key, key1,key2,key3,key4,key5,key6}
 	theJson, err := json.Marshal(provider)
 	fmt.Printf("%+v\n", string(theJson))
 	stub.PutState(key, theJson)
@@ -331,7 +334,7 @@ func (t *SimpleChaincode) writeProviderInformation(stub shim.ChaincodeStubInterf
 
 func (t *SimpleChaincode) writePatientsInformation(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	  // var key, value string
-    var key , key1 , key2 , key3 , key4 , key5 string
+    var key , key1 , key2 , key3 , key4 , key5  , key6 string
     var err error
     fmt.Println("running write()")
 
@@ -347,10 +350,11 @@ func (t *SimpleChaincode) writePatientsInformation(stub shim.ChaincodeStubInterf
 	key3 = args[3]
 	key4 = args[4]
 	key5 = args[5]
+	key6 = args[6]
 
-	fmt.Println(key+" : "+key1+" : "+key2+" : "+key3+" : "+key4+" : "+key5)
+	fmt.Println(key+" : "+key1+" : "+key2+" : "+key3+" : "+key4+" : "+key5+" : "+key6)
 
-	provider := Provider{key, key1,key2,key3,key4,key5}
+	provider := PreAuthRequest{key, key1,key2,key3,key4,key5,key6}
 	theJson, err := json.Marshal(provider)
 	fmt.Printf("%+v\n", string(theJson))
 	stub.PutState(key, theJson)
@@ -367,7 +371,7 @@ func (t *SimpleChaincode) writePatientsInformation(stub shim.ChaincodeStubInterf
 
 func (t *SimpleChaincode) writeServicesRequested(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	  // var key, value string
-    var key , key1 , key2 , key3 , key4 , key5 string
+    var key , key1 , key2 , key3 , key4 , key5  , key6 string
     var err error
     fmt.Println("running write()")
 
@@ -383,10 +387,11 @@ func (t *SimpleChaincode) writeServicesRequested(stub shim.ChaincodeStubInterfac
 	key3 = args[3]
 	key4 = args[4]
 	key5 = args[5]
+	key6 = args[6]
 
-	fmt.Println(key+" : "+key1+" : "+key2+" : "+key3+" : "+key4+" : "+key5)
+	fmt.Println(key+" : "+key1+" : "+key2+" : "+key3+" : "+key4+" : "+key5+" : "+key6)
 
-	provider := Provider{key, key1,key2,key3,key4,key5}
+	provider := PreAuthRequest{key, key1,key2,key3,key4,key5,key6}
 	theJson, err := json.Marshal(provider)
 	fmt.Printf("%+v\n", string(theJson))
 	stub.PutState(key, theJson)
@@ -402,7 +407,7 @@ func (t *SimpleChaincode) writeServicesRequested(stub shim.ChaincodeStubInterfac
 
 func (t *SimpleChaincode) writeClientsInformation(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	  // var key, value string
-    var key , key1 , key2 , key3 , key4 , key5 string
+    var key , key1 , key2 , key3 , key4 , key5  , key6 string
     var err error
     fmt.Println("running write()")
 
@@ -418,10 +423,11 @@ func (t *SimpleChaincode) writeClientsInformation(stub shim.ChaincodeStubInterfa
 	key3 = args[3]
 	key4 = args[4]
 	key5 = args[5]
+	key6 = args[6]
 
-	fmt.Println(key+" : "+key1+" : "+key2+" : "+key3+" : "+key4+" : "+key5)
+	fmt.Println(key+" : "+key1+" : "+key2+" : "+key3+" : "+key4+" : "+key5+" : "+key6)
 
-	provider := Provider{key, key1,key2,key3,key4,key5}
+	provider := PreAuthRequest{key, key1,key2,key3,key4,key5,key6}
 	theJson, err := json.Marshal(provider)
 	fmt.Printf("%+v\n", string(theJson))
 	stub.PutState(key, theJson)
@@ -471,7 +477,7 @@ func (t *SimpleChaincode) read(stub shim.ChaincodeStubInterface, args []string) 
         return nil, errors.New(jsonResp)
     }
    
-var p Providers
+var p PreAuthRequests
     json.Unmarshal(valAsbytes, &p)
    fmt.Println("hi >>>>> "+string(valAsbytes))
 
@@ -487,6 +493,11 @@ func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function strin
 	if function == "read" {											//read a variable
 		fmt.Println("hi there " + function)						//error
 		return t.read(stub, args)
+	}
+
+	if function == "readPreAuth" {											//read a variable
+		fmt.Println("hi there " + function)						//error
+		return t.readPreAuth(stub, args)
 	}
 
 	if function == "pro" {											//read a variable
@@ -537,6 +548,51 @@ func (t *SimpleChaincode) readProviderInformation(stub shim.ChaincodeStubInterfa
 
     return valAsbytes, nil
 }
+
+
+		/////////// Read PreAuth  
+func (t *SimpleChaincode) readPreAuth(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+    var key, jsonResp  string
+    var err  error
+    //var preAuthJson []byte
+
+    if len(args) != 1 {
+        return nil, errors.New("Incorrect number of arguments. Expecting name of the key to query")
+    }
+
+    valAsbytes, err := stub.GetState("lst")
+    if err != nil {
+        jsonResp = "{\"Error\":\"Failed to get state for " + key + "\"}"
+        return nil, errors.New(jsonResp)
+    }
+   
+    var preAuthReq PreAuthRequests
+    json.Unmarshal(valAsbytes, &preAuthReq)
+    fmt.Println("PatientInformation >>>>> "+string(valAsbytes))
+
+    key = args[0]
+    //var preAuthReqFound PreAuthRequest
+     
+     for _, preAuth := range preAuthReq {
+        fmt.Printf("ID: %s NAME: %S\n", preAuth.Id, preAuth.Name)
+        fmt.Println("")
+	if key == preAuth.Id {
+		preAuthJson, _ := json.Marshal(preAuth)	
+		fmt.Println("preAuthJson >>>>> "+string(preAuthJson))
+	}else {
+		fmt.Println("No Match Found...")
+	}
+    }
+
+    //json.Unmarshal(preAuthJson, &preAuthReqFound)
+    //fmt.Println("preAuthJson >>>>> "+preAuthReqFound.Name)
+    //fmt.Println("preAuthJson >>>>> "+string(preAuthJson))
+    	
+      //return preAuthJson, nil	
+    return valAsbytes, nil
+}
+
+
 
 		/////////// Read PatientInformation  
 func (t *SimpleChaincode) readPatientInformation(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
