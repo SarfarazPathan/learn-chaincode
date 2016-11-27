@@ -313,9 +313,9 @@ func (t *SimpleChaincode) writePreAuth(stub shim.ChaincodeStubInterface, args []
     var err error
     fmt.Println("running writePreAuth >>>>> ")
 
-    if len(args) != 6 {
-        return nil, errors.New("Incorrect number of arguments. Expecting 2. name of the key and value to set")
-    }
+   // if len(args) != 6 {
+     //   return nil, errors.New("Incorrect number of arguments. Expecting 2. name of the key and value to set")
+   // }
 
 	 valAsbytes , _ := t.read(stub,args)
 
