@@ -331,6 +331,9 @@ func (t *SimpleChaincode) writePreAuth(stub shim.ChaincodeStubInterface, args []
 	  key4 = args[2]
 	  key5 = "Blue Cross"
 	  key6 = "PENDING"
+
+		fmt.Println(key+" : "+key1+" : "+key2+" : "+key3+" : "+key4+" : "+key5+" : "+key6)
+
           newPreAuthReq := PreAuthRequest{key, key1,key2,key3,key4,key5,key6}
  
 	oldPreAuthReq = append(oldPreAuthReq,newPreAuthReq)
