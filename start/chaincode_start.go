@@ -251,7 +251,9 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 		return t.Init(stub, "init", args)
 	}else if function == "write" {
 		return t.write(stub, args)
-	}	
+	}else if function == "writePreAuth" {
+		return t.writePreAuth(stub, args)
+	}
 	fmt.Println("invoke did not find func: " + function)					//error
 
 	return nil, errors.New("Received unknown function invocation: " + function)
@@ -268,19 +270,29 @@ func (t *SimpleChaincode) write(stub shim.ChaincodeStubInterface, args []string)
         return nil, errors.New("Incorrect number of arguments. Expecting 2. name of the key and value to set")
     }
 
-	key = args[0]                            //rename for fun
-	//value = args[1]
+	//key = args[0]                            //rename for fun
 	
-	key1 = args[1]
-	key2 = args[2]
-	key3 = args[3]
-	key4 = args[4]
-	key5 = args[5]
-	key6 = args[6]
+	//key1 = args[1]
+	//key2 = args[2]
+	//key3 = args[3]
+	//key4 = args[4]
+	//key5 = args[5]
+	//key6 = args[6]
 
-	fmt.Println(key+" : "+key1+" : "+key2+" : "+key3+" : "+key4+" : "+key5+" : "+key6)
+	//fmt.Println(key+" : "+key1+" : "+key2+" : "+key3+" : "+key4+" : "+key5+" : "+key6)
 
-	provider := PreAuthRequest{key, key1,key2,key3,key4,key5,key6}
+	//provider := PreAuthRequest{key, key1,key2,key3,key4,key5,key6}
+	
+
+	  key = args[0]                            //rename for fun
+	  key1 = args[12]
+	  key2 = args[10]
+	  key3 = args[3] + " , " +args[4]
+	  key4 = args[2]
+	  key5 = "Blue Cross"
+	  key6 = "PENDING"
+	  provider := PreAuthRequest{key, key1,key2,key3,key4,key5,key6}
+
 	theJson, err := json.Marshal(provider)
 	fmt.Printf("%+v\n", string(theJson))
 	stub.PutState(key, theJson)
@@ -293,6 +305,51 @@ func (t *SimpleChaincode) write(stub shim.ChaincodeStubInterface, args []string)
 
     return nil, nil
 }
+
+//////////////////////////////
+
+func (t *SimpleChaincode) writePreAuth(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+    var key , key1 , key2 , key3 , key4 , key5, key6 string
+    var err error
+    fmt.Println("running write()")
+
+    if len(args) != 6 {
+        return nil, errors.New("Incorrect number of arguments. Expecting 2. name of the key and value to set")
+    }
+
+	 valAsbytes , _ := t.readPreAuth(stub,args)
+
+	 oldPreAuthReq := []PreAuthRequest{}
+	 json.Unmarshal(valAsbytes, &oldPreAuthReq)
+
+	  key = args[0]                            //rename for fun
+	  key1 = args[12]
+	  key2 = args[10]
+	  key3 = args[3] + " , " +args[4]
+	  key4 = args[2]
+	  key5 = "Blue Cross"
+	  key6 = "PENDING"
+          newPreAuthReq := PreAuthRequest{key, key1,key2,key3,key4,key5,key6}
+ 
+	oldPreAuthReq = append(oldPreAuthReq,newPreAuthReq)
+	
+	theJson, err := json.Marshal(oldPreAuthReq)
+	fmt.Printf("%+v\n", string(theJson))
+	stub.PutState("lst", theJson)
+
+    
+    //err = stub.PutState(key, []byte(value))  //write the variable into the chaincode state
+    if err != nil {
+       return nil, err
+    }
+
+    return nil, nil
+}
+
+
+
+
+
 
 
 ///////////
@@ -478,9 +535,11 @@ func (t *SimpleChaincode) read(stub shim.ChaincodeStubInterface, args []string) 
         return nil, errors.New(jsonResp)
     }
    
-var p PreAuthRequests
+    var p PreAuthRequests
     json.Unmarshal(valAsbytes, &p)
-   fmt.Println("hi >>>>> "+string(valAsbytes))
+   
+    
+    fmt.Println("hi >>>>> "+string(valAsbytes))
 
     return valAsbytes, nil
 
