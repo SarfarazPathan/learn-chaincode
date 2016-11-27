@@ -311,13 +311,15 @@ func (t *SimpleChaincode) write(stub shim.ChaincodeStubInterface, args []string)
 func (t *SimpleChaincode) writePreAuth(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
     var key , key1 , key2 , key3 , key4 , key5, key6 string
     var err error
-    fmt.Println("running write()")
+    fmt.Println("running writePreAuth >>>>> ")
 
     if len(args) != 6 {
         return nil, errors.New("Incorrect number of arguments. Expecting 2. name of the key and value to set")
     }
 
-	 valAsbytes , _ := t.readPreAuth(stub,args)
+	 valAsbytes , _ := t.read(stub,args)
+
+	 fmt.Println("writePreAuth valAsbytes >>>>> "+string(valAsbytes))
 
 	 oldPreAuthReq := []PreAuthRequest{}
 	 json.Unmarshal(valAsbytes, &oldPreAuthReq)
@@ -334,7 +336,7 @@ func (t *SimpleChaincode) writePreAuth(stub shim.ChaincodeStubInterface, args []
 	oldPreAuthReq = append(oldPreAuthReq,newPreAuthReq)
 	
 	theJson, err := json.Marshal(oldPreAuthReq)
-	fmt.Printf("%+v\n", string(theJson))
+	fmt.Printf("oldPreAuthReq %+v\n", string(theJson))
 	stub.PutState("lst", theJson)
 
     
@@ -633,6 +635,8 @@ func (t *SimpleChaincode) readPreAuth(stub shim.ChaincodeStubInterface, args []s
     key = args[0]
     //var preAuthReqFound PreAuthRequest
      
+     var preAuthJson []byte
+
      for _, preAuth := range preAuthReq {
         fmt.Println(preAuth.Id +" : "+ preAuth.Name)
         fmt.Println("")
@@ -648,8 +652,8 @@ func (t *SimpleChaincode) readPreAuth(stub shim.ChaincodeStubInterface, args []s
     //fmt.Println("preAuthJson >>>>> "+preAuthReqFound.Name)
     //fmt.Println("preAuthJson >>>>> "+string(preAuthJson))
     	
-      //return preAuthJson, nil	
-    return valAsbytes, nil
+      return preAuthJson, nil	
+    //return valAsbytes, nil
 }
 
 
