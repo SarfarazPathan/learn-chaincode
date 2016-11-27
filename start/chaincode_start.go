@@ -323,6 +323,7 @@ func (t *SimpleChaincode) writePreAuth(stub shim.ChaincodeStubInterface, args []
 
 	 for i:=0; i < len(args); i++ {
 		fmt.Println(args[i])
+		fmt.Println(i)
 	}
 
 	 oldPreAuthReq := []PreAuthRequest{}
