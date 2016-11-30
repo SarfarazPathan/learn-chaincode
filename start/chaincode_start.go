@@ -552,8 +552,9 @@ func (t *SimpleChaincode) read(stub shim.ChaincodeStubInterface, args []string) 
         return nil, errors.New(jsonResp)
     }
    
-    var p PreAuthRequests
-    json.Unmarshal(valAsbytes, &p)
+   // var p PreAuthRequests
+      var p *[]PreAuthRequest
+      json.Unmarshal(valAsbytes, &p)
    
     
     fmt.Println("hi >>>>> "+string(valAsbytes))
