@@ -326,7 +326,7 @@ func (t *SimpleChaincode) writePreAuth(stub shim.ChaincodeStubInterface, args []
 		fmt.Println(i)
 	}
 
-	 oldPreAuthReq := []PreAuthRequest{}
+	 var oldPreAuthReq *[]PreAuthRequest
 	 json.Unmarshal(valAsbytes, &oldPreAuthReq)
 
 	fmt.Println("<<<<<<<< PreAuthRequest >>>>>")
@@ -342,10 +342,14 @@ func (t *SimpleChaincode) writePreAuth(stub shim.ChaincodeStubInterface, args []
 
 		fmt.Println(key+" : "+key1+" : "+key2+" : "+key3+" : "+key4+" : "+key5+" : "+key6)
 
-          newPreAuthReq := PreAuthRequest{key, key1,key2,key3,key4,key5,key6}
+         newPreAuthReq := PreAuthRequest{key, key1,key2,key3,key4,key5,key6}
+
+	// oldPreAuthReq := PreAuthRequests{&newPreAuthReq}
  
-	oldPreAuthReq = append(oldPreAuthReq,newPreAuthReq)
+	*oldPreAuthReq = append(*oldPreAuthReq,newPreAuthReq)
 	
+	fmt.Println(*oldPreAuthReq)
+
 	theJson, err := json.Marshal(oldPreAuthReq)
 	fmt.Printf("oldPreAuthReq %+v\n", string(theJson))
 	stub.PutState("lst", theJson)
