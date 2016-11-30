@@ -519,8 +519,8 @@ func (t *SimpleChaincode) read(stub shim.ChaincodeStubInterface, args []string) 
      // var p *[]PreAuthRequest
      // json.Unmarshal(valAsbytes, &p)
 
-      p := []PreAuthRequest{}
-      json.Unmarshal(valAsbytes, &p)
+   //   p := []PreAuthRequest{}
+   //   json.Unmarshal(valAsbytes, &p)
    
     
     fmt.Println("hi >>>>> "+string(valAsbytes))
@@ -615,7 +615,7 @@ func (t *SimpleChaincode) readPreAuth(stub shim.ChaincodeStubInterface, args []s
 
     preAuthReq := []PreAuthRequest{}
     json.Unmarshal(valAsbytes, &preAuthReq)
-    fmt.Println("PatientInformation >>>>> "+string(valAsbytes))
+    fmt.Println("PreAuth >>>>> "+string(valAsbytes))
 
     key = args[0]
     //var preAuthReqFound PreAuthRequest
