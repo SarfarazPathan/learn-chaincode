@@ -49,8 +49,7 @@ type PreAuthRequest struct {
     PrimayInsurance  string `json:"primaryInsurance"`
     Status           string `json:"status"`
 }
-
-type PreAuthRequests []*PreAuthRequest
+//type PreAuthRequests []*PreAuthRequest
 
 
 
@@ -110,49 +109,12 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 		return nil, errors.New("Incorrect number of arguments. Expecting 1")
 	}
 
-	  preAuthRequest1 := PreAuthRequest{"MQ001","01/01/2017", "SARFARAZ","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","REJECTED"}
-	  preAuthRequest2 := PreAuthRequest{"MQ002","01/01/2017", "JOHN","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","PENDING"}
-	  preAuthRequest3 := PreAuthRequest{"MQ003","01/01/2017", "PETE","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","APPROVED"}
-	  preAuthRequest4 := PreAuthRequest{"MQ004","01/01/2017", "TESTER","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","APPROVED"}
-	  preAuthRequest5 := PreAuthRequest{"MQ005","01/01/2017", "PROVIDER","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","APPROVED"}
-	  preAuthRequest6 := PreAuthRequest{"MQ006","01/01/2017", "PAYER","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","PENDING"}
-	  preAuthRequest7 := PreAuthRequest{"MQ007","01/01/2017", "MEMBER","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","REJECTED"}
-	  preAuthRequest8 := PreAuthRequest{"MQ008","01/01/2017", "JEANNE","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","APPROVED"}
-	  preAuthRequest9 := PreAuthRequest{"MQ009","01/01/2017", "JING","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","PENDING"}
-	  preAuthRequest10 := PreAuthRequest{"MQ010","01/01/2017", "PETER","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE SOUTH","APPROVED"}
-	 
-	  theJson1, _ := json.Marshal(preAuthRequest1)
-	  theJson2, _ := json.Marshal(preAuthRequest2)
-	  theJson3, _ := json.Marshal(preAuthRequest3)
-	  theJson4, _ := json.Marshal(preAuthRequest4)
-	  theJson5, _ := json.Marshal(preAuthRequest5)
-	  theJson6, _ := json.Marshal(preAuthRequest6)
-	  theJson7, _ := json.Marshal(preAuthRequest7)
-	  theJson8, _ := json.Marshal(preAuthRequest8)
-	  theJson9, _ := json.Marshal(preAuthRequest9)
-	  theJson10, _ := json.Marshal(preAuthRequest10)
-
-	fmt.Printf("%+v\n", string(theJson1))
-	fmt.Printf("%+v\n", string(theJson10))
-
-	stub.PutState("MQ001", theJson1)
-	stub.PutState("MQ002", theJson2)
-	stub.PutState("MQ003", theJson3)
-	stub.PutState("MQ004", theJson4)
-	stub.PutState("MQ005", theJson5)
-	stub.PutState("MQ006", theJson6)
-	stub.PutState("MQ007", theJson7)
-	stub.PutState("MQ008", theJson8)
-	stub.PutState("MQ009", theJson9)
-	stub.PutState("MQ010", theJson10)
-
-	    provBytes := PreAuthRequests{&preAuthRequest1, &preAuthRequest2,&preAuthRequest3,&preAuthRequest4,&preAuthRequest5,&preAuthRequest6,&preAuthRequest7,&preAuthRequest8}
-
-	    b, _ := json.Marshal(provBytes)
-	    fmt.Println(string(b))
-	
-	stub.PutState("lst", b)
-
+	preAuthRequests := []PreAuthRequest{}
+	preAuthRequest := PreAuthRequest{"MQ001","01/01/2017", "SARFARAZ","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE 	SOUTH","REJECTED"}
+	preAuthRequests = append(preAuthRequests,preAuthRequest)
+        preAuthReqJson, _ := json.Marshal(preAuthRequests)
+	fmt.Println(string(preAuthReqJson))
+	stub.PutState("lst", preAuthReqJson)
 
 		///////////// Default ProvidersInformation Stored
 	provInfo := ProviderInformation{"PI001", "SarfarazPathan","NIBM ROAD","PUNE","441802","01010101010","FAX10101","Khan"}
@@ -326,7 +288,10 @@ func (t *SimpleChaincode) writePreAuth(stub shim.ChaincodeStubInterface, args []
 		fmt.Println(i)
 	}
 
-	 var oldPreAuthReq *[]PreAuthRequest
+	// var oldPreAuthReq *[]PreAuthRequest
+	// json.Unmarshal(valAsbytes, &oldPreAuthReq)
+
+	 oldPreAuthReq := []PreAuthRequest{}
 	 json.Unmarshal(valAsbytes, &oldPreAuthReq)
 
 	fmt.Println("<<<<<<<< PreAuthRequest >>>>>")
@@ -340,15 +305,14 @@ func (t *SimpleChaincode) writePreAuth(stub shim.ChaincodeStubInterface, args []
 	  key5 = "Blue Cross"
 	  key6 = "PENDING"
 
-		fmt.Println(key+" : "+key1+" : "+key2+" : "+key3+" : "+key4+" : "+key5+" : "+key6)
+	 fmt.Println(key+" : "+key1+" : "+key2+" : "+key3+" : "+key4+" : "+key5+" : "+key6)
 
          newPreAuthReq := PreAuthRequest{key, key1,key2,key3,key4,key5,key6}
-
-	// oldPreAuthReq := PreAuthRequests{&newPreAuthReq}
- 
-	*oldPreAuthReq = append(*oldPreAuthReq,newPreAuthReq)
+	 oldPreAuthReq = append(oldPreAuthReq,newPreAuthReq)
 	
-	fmt.Println(*oldPreAuthReq)
+	// oldPreAuthReq := PreAuthRequests{&newPreAuthReq}
+ 	//*oldPreAuthReq = append(*oldPreAuthReq,newPreAuthReq)
+	//fmt.Println(*oldPreAuthReq)
 
 	theJson, err := json.Marshal(oldPreAuthReq)
 	fmt.Printf("oldPreAuthReq %+v\n", string(theJson))
@@ -552,8 +516,10 @@ func (t *SimpleChaincode) read(stub shim.ChaincodeStubInterface, args []string) 
         return nil, errors.New(jsonResp)
     }
    
-   // var p PreAuthRequests
-      var p *[]PreAuthRequest
+     // var p *[]PreAuthRequest
+     // json.Unmarshal(valAsbytes, &p)
+
+      p := []PreAuthRequest{}
       json.Unmarshal(valAsbytes, &p)
    
     
@@ -644,7 +610,10 @@ func (t *SimpleChaincode) readPreAuth(stub shim.ChaincodeStubInterface, args []s
         return nil, errors.New(jsonResp)
     }
    
-    var preAuthReq PreAuthRequests
+    //var preAuthReq PreAuthRequests
+    //json.Unmarshal(valAsbytes, &preAuthReq)
+
+    preAuthReq := []PreAuthRequest{}
     json.Unmarshal(valAsbytes, &preAuthReq)
     fmt.Println("PatientInformation >>>>> "+string(valAsbytes))
 
