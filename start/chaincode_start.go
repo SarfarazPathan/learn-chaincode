@@ -485,7 +485,8 @@ func (t *SimpleChaincode) writeClientsInformation(stub shim.ChaincodeStubInterfa
 
 
 func (t *SimpleChaincode) read(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	  var key, jsonResp string
+ fmt.Println(" In read ...")
+    var key, jsonResp string
     var err  error
 	
 	user, _ := t.get_username(stub)
@@ -495,34 +496,14 @@ func (t *SimpleChaincode) read(stub shim.ChaincodeStubInterface, args []string) 
         return nil, errors.New("Incorrect number of arguments. Expecting name of the key to query")
     }
 
-   
-    //key = args[0]
-   // valAsbytes, err := stub.GetState(key)
-    //if err != nil {
-     //   jsonResp = "{\"Error\":\"Failed to get state for " + key + "\"}"
-      //  return nil, errors.New(jsonResp)
-    //}
-//    var p Provider	
-//    json.Unmarshal(valAsbytes, &p)
-//    fmt.Printf("%+v\n", p)
-	
- //   valAsbytes, _ :=  t.get_providers(stub)
-	
-//	fmt.Println("hi valAsbytes " + string(valAsbytes))
-
+    fmt.Println(" In read 1")
     valAsbytes, err := stub.GetState("lst")
+    fmt.Println(" In read 2")
     if err != nil {
         jsonResp = "{\"Error\":\"Failed to get state for " + key + "\"}"
         return nil, errors.New(jsonResp)
     }
-   
-     // var p *[]PreAuthRequest
-     // json.Unmarshal(valAsbytes, &p)
-
-   //   p := []PreAuthRequest{}
-   //   json.Unmarshal(valAsbytes, &p)
-   
-    
+    fmt.Println(" In read 3")
     fmt.Println("hi >>>>> "+string(valAsbytes))
 
     return valAsbytes, nil
@@ -596,31 +577,29 @@ func (t *SimpleChaincode) readProviderInformation(stub shim.ChaincodeStubInterfa
 
 		/////////// Read PreAuth  
 func (t *SimpleChaincode) readPreAuth(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+    fmt.Println(" In readPreAuth ")
     var key, jsonResp  string
     var err  error
-    //var preAuthJson []byte
 
     if len(args) != 1 {
         return nil, errors.New("Incorrect number of arguments. Expecting name of the key to query")
     }
 
+    fmt.Println(" In readPreAuth 1")
     valAsbytes, err := stub.GetState("lst")
     if err != nil {
         jsonResp = "{\"Error\":\"Failed to get state for " + key + "\"}"
         return nil, errors.New(jsonResp)
     }
    
-    //var preAuthReq PreAuthRequests
-    //json.Unmarshal(valAsbytes, &preAuthReq)
-
+    fmt.Println(" In readPreAuth 2")
     preAuthReq := []PreAuthRequest{}
     json.Unmarshal(valAsbytes, &preAuthReq)
     fmt.Println("PreAuth >>>>> "+string(valAsbytes))
 
     key = args[0]
-    //var preAuthReqFound PreAuthRequest
-     
-     var preAuthJson []byte
+    var preAuthJson []byte
+    fmt.Println(" In readPreAuth 3")
 
      for _, preAuth := range preAuthReq {
         fmt.Println(preAuth.Id +" : "+ preAuth.Name)
@@ -633,10 +612,6 @@ func (t *SimpleChaincode) readPreAuth(stub shim.ChaincodeStubInterface, args []s
 	}
     }
 
-    //json.Unmarshal(preAuthJson, &preAuthReqFound)
-    //fmt.Println("preAuthJson >>>>> "+preAuthReqFound.Name)
-    //fmt.Println("preAuthJson >>>>> "+string(preAuthJson))
-    	
       return preAuthJson, nil	
     //return valAsbytes, nil
 }
