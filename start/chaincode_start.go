@@ -492,10 +492,7 @@ func (t *SimpleChaincode) read(stub shim.ChaincodeStubInterface, args []string) 
 	user, _ := t.get_username(stub)
 	fmt.Println("USER : >> "+user)
 
-    if len(args) != 1 {
-        return nil, errors.New("Incorrect number of arguments. Expecting name of the key to query")
-    }
-
+  
     fmt.Println(" In read 1")
     valAsbytes, err := stub.GetState("lst")
     fmt.Println(" In read 2")
