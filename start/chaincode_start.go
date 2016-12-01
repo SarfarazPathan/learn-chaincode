@@ -110,8 +110,8 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 	}
 
 	preAuthRequests := []PreAuthRequest{}
-	preAuthRequest := PreAuthRequest{"MQ001","01/01/2017", "SARFARAZ","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE 	SOUTH","REJECTED"}
-	preAuthRequests = append(preAuthRequests,preAuthRequest)
+	//preAuthRequest := PreAuthRequest{"MQ001","01/01/2017", "SARFARAZ","INPATIENT HOSPITAL","JOHN ROBERT","TRICARE 	SOUTH","REJECTED"}
+	//preAuthRequests = append(preAuthRequests,preAuthRequest)
         preAuthReqJson, _ := json.Marshal(preAuthRequests)
 	fmt.Println(string(preAuthReqJson))
 	stub.PutState("lst", preAuthReqJson)
