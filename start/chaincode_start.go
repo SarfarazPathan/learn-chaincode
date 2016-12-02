@@ -92,6 +92,8 @@ type ClientInformation struct {
 }
 type ClientsInformation []*ClientInformation
 
+var temp []byte
+
 // ============================================================================================================================
 // Main
 // ============================================================================================================================
@@ -595,7 +597,7 @@ func (t *SimpleChaincode) readPreAuth(stub shim.ChaincodeStubInterface, args []s
     fmt.Println("PreAuth >>>>> "+string(valAsbytes))
 
     key = args[0]
-    var preAuthJson []byte
+    //var preAuthJson []byte
     fmt.Println(" In readPreAuth 3")
 
      for _, preAuth := range preAuthReq {
@@ -604,12 +606,14 @@ func (t *SimpleChaincode) readPreAuth(stub shim.ChaincodeStubInterface, args []s
 	if key == preAuth.Id {
 		preAuthJson, _ := json.Marshal(preAuth)	
 		fmt.Println("preAuthJson >>>>> "+string(preAuthJson))
+		temp = append(temp,preAuthJson...)
 	}else {
 		fmt.Println("No Match Found...")
 	}
     }
-
-      return preAuthJson, nil	
+	fmt.Println(string(temp))
+	return temp, nil	
+      //return preAuthJson, nil	
     //return valAsbytes, nil
 }
 
