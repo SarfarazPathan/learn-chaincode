@@ -217,7 +217,11 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 		return t.write(stub, args)
 	}else if function == "writePreAuth" {
 		return t.writePreAuth(stub, args)
+	}else if function == "statusChange" {
+		return t.statusChange(stub, args)
 	}
+
+	
 	fmt.Println("invoke did not find func: " + function)					//error
 
 	return nil, errors.New("Received unknown function invocation: " + function)
@@ -685,4 +689,42 @@ func (t *SimpleChaincode) readClientInformation(stub shim.ChaincodeStubInterface
     fmt.Println("ClientInformation  >>>>> "+string(valAsbytes))
 
     return valAsbytes, nil
+}
+
+
+		/////////// Status Changes   
+func (t *SimpleChaincode) statusChange(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+    var key, jsonResp string
+    var err  error
+
+     valAsbytes, err := stub.GetState("lst")
+    if err != nil {
+        jsonResp = "{\"Error\":\"Failed to get state for " + key + "\"}"
+        return nil, errors.New(jsonResp)
+    }
+   
+    preAuthReqId = args[0]
+
+    fmt.Println(" In statusChange 2"+preAuthReqId)
+    newPreAuthReq := []PreAuthRequest{}
+    oldPreAuthReq  := []PreAuthRequest{}
+
+    json.Unmarshal(valAsbytes, &oldPreAuthReq )
+    
+    fmt.Println("statusChange >>>>> "+string(valAsbytes))
+
+	for _, preAuth := range oldPreAuthReq {
+ 	    fmt.Println(preAuth.Id +" : "+ preAuth.Name)
+		if preAuthReqId == preAuth.Id {	
+			preAuth.Status = "Approved"
+		}
+	  newPreAuthReq = append(newPreAuthReq,preAuth)	
+	}
+	
+	newPreAuthReqJson, _ := json.Marshal(newPreAuthReq)
+	fmt.Println(string(newPreAuthReqJson))
+	
+	stub.PutState("lst", newPreAuthReqJson)
+
+    return nil, nil
 }
