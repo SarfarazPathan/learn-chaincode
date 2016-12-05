@@ -597,7 +597,7 @@ func (t *SimpleChaincode) readPreAuth(stub shim.ChaincodeStubInterface, args []s
     fmt.Println("PreAuth >>>>> "+string(valAsbytes))
 
     key = args[0]
-    //var preAuthJson []byte
+    var preAuthJsonOut []byte
     fmt.Println(" In readPreAuth 3")
 
      for _, preAuth := range preAuthReq {
@@ -605,14 +605,15 @@ func (t *SimpleChaincode) readPreAuth(stub shim.ChaincodeStubInterface, args []s
         fmt.Println("")
 	if key == preAuth.Id {
 		preAuthJson, _ := json.Marshal(preAuth)	
-		fmt.Println("preAuthJson >>>>> "+string(preAuthJson))
-		temp = append(temp,preAuthJson...)
+		preAuthJsonOut = preAuthJson
+		fmt.Println("preAuthJson >>>>> "+string(preAuthJsonOut))
+		//temp = append(temp,preAuthJson...)
 	}else {
 		fmt.Println("No Match Found...")
 	}
     }
-	fmt.Println(string(temp))
-	return temp, nil	
+	fmt.Println(string(preAuthJsonOut))
+	return preAuthJsonOut, nil	
       //return preAuthJson, nil	
     //return valAsbytes, nil
 }
