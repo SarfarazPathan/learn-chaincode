@@ -694,12 +694,12 @@ func (t *SimpleChaincode) readClientInformation(stub shim.ChaincodeStubInterface
 
 		/////////// Status Changes   
 func (t *SimpleChaincode) statusChange(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-    var key, jsonResp string
+    var preAuthReqId, jsonResp string
     var err  error
 
      valAsbytes, err := stub.GetState("lst")
     if err != nil {
-        jsonResp = "{\"Error\":\"Failed to get state for " + key + "\"}"
+        jsonResp = "{\"Error\":\"Failed to get state for " + preAuthReqId + "\"}"
         return nil, errors.New(jsonResp)
     }
    
