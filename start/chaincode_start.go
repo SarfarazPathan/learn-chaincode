@@ -48,7 +48,7 @@ type PreAuthRequest struct {
     ProviderNM       string `json:"providerNM"`
     PrimayInsurance  string `json:"primaryInsurance"`
     Status           string `json:"status"`
-    User             string `json:"status"`
+    User             string `json:"user"`
 }
 //type PreAuthRequests []*PreAuthRequest
 
@@ -315,7 +315,7 @@ func (t *SimpleChaincode) writePreAuth(stub shim.ChaincodeStubInterface, args []
 	  key5 = "Blue Cross"
 	  key6 = "PENDING"
 
-	 fmt.Println(key+" : "+key1+" : "+key2+" : "+key3+" : "+key4+" : "+key5+" : "+key6)
+	 fmt.Println(key+" : "+key1+" : "+key2+" : "+key3+" : "+key4+" : "+key5+" : "+key6+" : "+key7)
 
          newPreAuthReq := PreAuthRequest{key, key1,key2,key3,key4,key5,key6,key7}
 	 oldPreAuthReq = append(oldPreAuthReq,newPreAuthReq)
