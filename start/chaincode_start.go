@@ -406,7 +406,7 @@ func (t *SimpleChaincode) writePreAuth(stub shim.ChaincodeStubInterface, args []
 	// fmt.Println(key+" : "+key1+" : "+key2+" : "+key3+" : "+key4+" : "+key5+" : "+key6+" : "+key7)
 
          //newPreAuthReq := PreAuthRequest{key, key1,key2,key3,key4,key5,key6,key7}
-	 newPreAuthReq := PreAuthRequest{preAuthReqId , providerId , providerName ,providerAddr , providerCity , providerZip , providerPhone ,providerFax , providerContactPerson , patientName , patientID , patientDOB , patientDOR , srvRequested , srvDOS , srvCPTCode , srvICDCode , srvProviderFacility , srvPhone , srvAddr , srvCity , srvZip , clinicalInfo , user , primaryInsurance , status}
+	 newPreAuthReq := PreAuthRequest{preAuthReqId , providerId , providerName ,providerAddr , providerCity , providerZip , providerPhone ,providerFax , providerContactPerson , patientName , patientID , patientDOB , patientDOR , srvRequested , srvDOS , srvCPTCode , srvICDCode , srvProviderFacility , srvPhone , srvAddr , srvCity , srvZip , clinicalInfo ,primaryInsurance  ,status  , user}
 	 oldPreAuthReq = append(oldPreAuthReq,newPreAuthReq)
 	
 	// oldPreAuthReq := PreAuthRequests{&newPreAuthReq}
