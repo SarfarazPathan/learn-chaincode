@@ -400,7 +400,8 @@ func (t *SimpleChaincode) writePreAuth(stub shim.ChaincodeStubInterface, args []
 		clinicalInfo = 	args[22]				//// 22
 		user = 	args[23]					//// 23
 
-		primaryInsurance = "Blue Cross"
+		primaryInsurance = args[24]	
+		//primaryInsurance = "Blue Cross"
 	        status = "PENDING"
 
 	// fmt.Println(key+" : "+key1+" : "+key2+" : "+key3+" : "+key4+" : "+key5+" : "+key6+" : "+key7)
