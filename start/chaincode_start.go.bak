@@ -253,6 +253,8 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 		return t.writePreAuth(stub, args)
 	}else if function == "statusChange" {
 		return t.statusChange(stub, args)
+	}else if function == "remove" {
+		return t.deleteRecord(stub, args)
 	}
 
 	
@@ -818,6 +820,49 @@ func (t *SimpleChaincode) statusChange(stub shim.ChaincodeStubInterface, args []
 			preAuth.Status = approve
 		}
 	  newPreAuthReq = append(newPreAuthReq,preAuth)	
+	}
+	
+	newPreAuthReqJson, _ := json.Marshal(newPreAuthReq)
+	fmt.Println(string(newPreAuthReqJson))
+	
+	stub.PutState("lst", newPreAuthReqJson)
+
+    return nil, nil
+}
+
+
+
+
+/////////// Delete Record   
+func (t *SimpleChaincode) deleteRecord(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+    //var preAuthReqId, jsonResp, approve  string
+    var preAuthReqId, jsonResp  string
+    var err  error
+
+     valAsbytes, err := stub.GetState("lst")
+    if err != nil {
+        jsonResp = "{\"Error\":\"Failed to get state for " + preAuthReqId + "\"}"
+        return nil, errors.New(jsonResp)
+    }
+   
+    preAuthReqId = args[0]
+   // approve = args[1]
+
+    fmt.Println(" In statusChange 2"+preAuthReqId)
+    newPreAuthReq := []PreAuthRequest{}
+    oldPreAuthReq  := []PreAuthRequest{}
+
+    json.Unmarshal(valAsbytes, &oldPreAuthReq )
+    
+    fmt.Println("statusChange >>>>> "+string(valAsbytes))
+
+	for _, preAuth := range oldPreAuthReq {
+ 	    fmt.Println(preAuth.PreAuthReqId +" : "+ preAuth.ProviderName)
+		if preAuthReqId != preAuth.PreAuthReqId {	
+			//preAuth.Status = approve
+			newPreAuthReq = append(newPreAuthReq,preAuth)
+		}
+	  //newPreAuthReq = append(newPreAuthReq,preAuth)	
 	}
 	
 	newPreAuthReqJson, _ := json.Marshal(newPreAuthReq)
